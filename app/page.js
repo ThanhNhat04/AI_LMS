@@ -4,6 +4,9 @@ import { useState, useEffect, memo } from 'react';
 import LazyLoad from 'react-lazyload';
 import CourseContent from '../components/courseContent';
 
+const  MOODLE_TOKEN = process.env.NEXT_PUBLIC_MOODLE_TOKEN;
+
+
 const CourseDialog = ({ open, handleClose, course }) => {
     if (!open) return null;
     return (
@@ -35,7 +38,7 @@ const CourseCard = memo(({ course }) => {
                     <img
                         className="course-img"
                         src={course.overviewfiles?.[0]?.fileurl
-                            ? course.overviewfiles[0].fileurl + '?token=7c3afb790462432d924aef3f79a90b22'
+                            ? course.overviewfiles[0].fileurl + '?token=' + MOODLE_TOKEN
                             : 'https://img.freepik.com/free-vector/paper-style-white-monochrome-background_23-2149009213.jpg'}
                         alt="Lập trình thiết bị di động"
                     />
@@ -65,11 +68,9 @@ export default function CourseManager() {
 
     useEffect(() => {
         const fetchCourses = async () => {
-            const token = '7c3afb790462432d924aef3f79a90b22';
             const wsFunction = 'core_course_get_courses_by_field';
             const moodleWsRestFormat = 'json';
-            const url = `https://learn.s4h.edu.vn/webservice/rest/server.php?wstoken=${token}&wsfunction=${wsFunction}&moodlewsrestformat=${moodleWsRestFormat}`;
-
+            const url = `https://learn.s4h.edu.vn/webservice/rest/server.php?wstoken=${MOODLE_TOKEN}&wsfunction=${wsFunction}&moodlewsrestformat=${moodleWsRestFormat}`;
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -102,7 +103,7 @@ export default function CourseManager() {
                 ))}
             </div>
             <style>{`
-                .git {
+                .main-container {
                     background: #fff;
                     border-radius: 12px;
                     padding: 16px;

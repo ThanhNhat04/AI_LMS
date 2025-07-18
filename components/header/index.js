@@ -10,11 +10,9 @@ import MenuItem from '@mui/material/MenuItem';
 
 function Header() {
     const [anchorEl, setAnchorEl] = React.useState(null);
-
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
-
     const handleClose = () => {
         setAnchorEl(null);
     };
