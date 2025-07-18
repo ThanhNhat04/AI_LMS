@@ -17,8 +17,6 @@ a {
   --maina: #0866ff;
   --text: #1CB0F6;
   --text_400: #676b7b;
-  --bienhoa_m: #ff4d4f;
-  --bienhoa_b: #ffffff;
 
   --box: rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px;
   --font_Roboto: "Roboto", sans-serif;
@@ -31,7 +29,6 @@ a {
   color: var(--main);
   margin-bottom: 15px;
 }
-
 
 
 * {

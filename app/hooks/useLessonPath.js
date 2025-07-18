@@ -1,11 +1,30 @@
 import { log } from 'console';
 import { useState, useEffect } from 'react';
 
-const TOKEN = process.env.REACT_APP_MOODLE_TOKEN;
-log('Moodle Token:', TOKEN);
+// ---- API constants and helpers ----
+const BASE_URL = 'https://learn.s4h.edu.vn';
+const TOKEN = process.env.REACT_APP_MOODLE_TOKEN ;
+
+const getAssignmentsUrl = (courseid) =>
+  `${BASE_URL}/webservice/rest/server.php?moodlewsrestformat=json&wstoken=${TOKEN}&wsfunction=mod_assign_get_assignments&courseids[0]=${courseid}`;
+
+const getSubmissionsUrl = (ids) => {
+  let url = `${BASE_URL}/webservice/rest/server.php?moodlewsrestformat=json&wstoken=${TOKEN}&wsfunction=mod_assign_get_submissions`;
+  ids.forEach((id, i) => url += `&assignmentids[${i}]=${id}`);
+  return url;
+};
+
+const getUsersInfoUrl = (userIds) => {
+  let url = `${BASE_URL}/webservice/rest/server.php?moodlewsrestformat=json&wstoken=${TOKEN}&wsfunction=core_user_get_users_by_field&field=id`;
+  userIds.forEach((id, index) => {
+    url += `&values[${index}]=${id}`;
+  });
+  return url;
+};
+
 
 export async function findAssignment(courseid) {
-  const url = `https://learn.s4h.edu.vn/webservice/rest/server.php?moodlewsrestformat=json&wstoken=${TOKEN}&wsfunction=mod_assign_get_assignments&courseids[0]=${courseid}`;
+  const url = getAssignmentsUrl(courseid);
   const response = await fetch(url, {
     method: 'POST',
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -15,11 +34,7 @@ export async function findAssignment(courseid) {
 }
 
 export async function findSubmissions(ids) {
-  let url = 'https://learn.s4h.edu.vn/webservice/rest/server.php';
-  url += '?moodlewsrestformat=json';
-  url += '&wstoken=' + TOKEN;
-  url += '&wsfunction=mod_assign_get_submissions';
-  ids.forEach((id, i) => url += `&assignmentids[${i}]=${id}`);
+  const url = getSubmissionsUrl(ids);
   const response = await fetch(url, {
     method: 'POST',
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -38,14 +53,7 @@ export async function findSubmissions(ids) {
 }
 
 export async function getUsersInfo(userIds) {
-  let url = 'https://learn.s4h.edu.vn/webservice/rest/server.php';
-  url += '?moodlewsrestformat=json';
-  url += '&wstoken=' + TOKEN;
-  url += '&wsfunction=core_user_get_users_by_field';
-  url += '&field=id';
-  userIds.forEach((id, index) => {
-    url += `&values[${index}]=${id}`;
-  });
+  const url = getUsersInfoUrl(userIds);
   const response = await fetch(url, {
     method: 'POST',
     headers: { "Content-Type": "application/x-www-form-urlencoded" },

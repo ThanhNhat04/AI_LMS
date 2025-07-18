@@ -1,0 +1,199 @@
+{
+  "study_sessions": [
+    {
+      "session_id": "session_001",
+      "article": {
+        "title": "Các Định Luật Newton về Chuyển Động",
+        "content": "Các Định Luật Newton về Chuyển Động là ba nguyên lý cơ bản mô tả mối quan hệ giữa các lực tác dụng lên vật thể và chuyển động của nó.\n\nDefinh Luật Thứ Nhất (Định Luật Quán Tính): Một vật đang đứng yên sẽ tiếp tục đứng yên, và một vật đang chuyển động sẽ tiếp tục chuyển động với cùng tốc độ và hướng, trừ khi có lực không cân bằng tác dụng lên nó.\n\nĐịnh Luật Thứ Hai: Gia tốc của vật thể tỉ lệ thuận với lực tổng hợp tác dụng lên nó và tỉ lệ nghịch với khối lượng của nó. Điều này được biểu diễn qua công thức F = ma, trong đó F là lực, m là khối lượng, và a là gia tốc.\n\nĐịnh Luật Thứ Ba: Với mỗi tác dụng, có một phản tác dụng bằng và ngược chiều. Khi một vật tác dụng lực lên vật thứ hai, vật thứ hai đồng thời tác dụng lại một lực có độ lớn bằng nhau nhưng ngược hướng lên vật thứ nhất.\n\nNhững định luật này tạo thành nền tảng của cơ học cổ điển và giúp chúng ta hiểu cách các vật thể chuyển động trong thế giới hàng ngày.",
+        "subject": "vật lý",
+        "difficulty": "trung bình"
+      },
+      "questions": [
+        {
+          "id": 1,
+          "question": "Theo Định Luật Thứ Nhất của Newton, điều gì xảy ra với một vật đang chuyển động khi không có lực bên ngoài tác dụng?",
+          "options": [
+            "A) Nó sẽ dần dần chậm lại và dừng",
+            "B) Nó sẽ tiếp tục chuyển động với vận tốc không đổi",
+            "C) Nó sẽ tăng tốc",
+            "D) Nó sẽ thay đổi hướng"
+          ],
+          "explanation": "Định Luật Thứ Nhất của Newton nói rằng một vật đang chuyển động sẽ tiếp tục chuyển động với cùng tốc độ và hướng trừ khi có lực không cân bằng tác dụng."
+        },
+        {
+          "id": 2,
+          "question": "Nếu một vật 10 kg chịu tác dụng của lực tổng hợp 50 N, gia tốc của nó là bao nhiêu?",
+          "options": [
+            "A) 5 m/s²",
+            "B) 0,2 m/s²",
+            "C) 500 m/s²",
+            "D) 60 m/s²"
+          ],
+          "explanation": "Sử dụng công thức F = ma, ta có a = F/m = 50N / 10kg = 5 m/s²"
+        },
+        {
+          "id": 3,
+          "question": "Định Luật Thứ Ba của Newton phát biểu rằng:",
+          "options": [
+            "A) Lực bằng khối lượng nhân với gia tốc",
+            "B) Vật đứng yên sẽ tiếp tục đứng yên",
+            "C) Với mỗi tác dụng, có một phản tác dụng bằng và ngược chiều",
+            "D) Gia tốc tỉ lệ thuận với lực"
+          ],
+          "explanation": "Định Luật Thứ Ba của Newton cụ thể nói rằng với mỗi tác dụng, có một phản tác dụng bằng và ngược chiều."
+        },
+        {
+          "id": 4,
+          "question": "Đơn vị của lực trong hệ SI là gì?",
+          "options": [
+            "A) Kilogram (kg)",
+            "B) Newton (N)",
+            "C) Joule (J)",
+            "D) Mét trên giây (m/s)"
+          ],
+          "explanation": "Newton (N) là đơn vị SI của lực, được đặt theo tên của Sir Isaac Newton."
+        },
+        {
+          "id": 5,
+          "question": "Nếu một vật có lực tổng hợp bằng không tác dụng lên nó, ta có thể nói gì về chuyển động của nó?",
+          "options": [
+            "A) Nó phải đứng yên",
+            "B) Nó phải đang tăng tốc",
+            "C) Nó chuyển động với vận tốc không đổi hoặc đứng yên",
+            "D) Nó liên tục thay đổi hướng"
+          ],
+          "explanation": "Với lực tổng hợp bằng không, vật duy trì trạng thái chuyển động - hoặc đứng yên hoặc chuyển động với vận tốc không đổi."
+        },
+        {
+          "id": 6,
+          "question": "Định luật nào của Newton giải thích tại sao bạn cảm thấy bị đẩy vào ghế khi xe tăng tốc?",
+          "options": [
+            "A) Định Luật Thứ Nhất",
+            "B) Định Luật Thứ Hai",
+            "C) Định Luật Thứ Ba",
+            "D) Cả ba định luật"
+          ],
+          "explanation": "Định Luật Thứ Nhất (quán tính) giải thích tại sao cơ thể bạn có xu hướng đứng yên trong khi xe tăng tốc về phía trước."
+        },
+        {
+          "id": 7,
+          "question": "Điều gì xảy ra với gia tốc nếu khối lượng vật tăng gấp đôi trong khi lực không đổi?",
+          "options": [
+            "A) Gia tốc tăng gấp đôi",
+            "B) Gia tốc giảm một nửa",
+            "C) Gia tốc không đổi",
+            "D) Gia tốc bằng không"
+          ],
+          "explanation": "Từ công thức F = ma, nếu khối lượng tăng gấp đôi và lực không đổi, gia tốc sẽ giảm một nửa (a = F/2m)."
+        },
+        {
+          "id": 8,
+          "question": "Khi bạn đi bộ, điều gì tạo ra lực đẩy bạn về phía trước?",
+          "options": [
+            "A) Lực của cơ bắp bạn",
+            "B) Lực ma sát từ mặt đất đẩy ngược lại chân bạn",
+            "C) Lực hấp dẫn",
+            "D) Lực cản không khí"
+          ],
+          "explanation": "Theo Định Luật Thứ Ba của Newton, khi bạn đẩy mặt đất về phía sau, mặt đất đẩy bạn về phía trước với lực bằng nhau."
+        },
+        {
+          "id": 9,
+          "question": "Quán tính là gì?",
+          "options": [
+            "A) Lực giữ cho vật chuyển động",
+            "B) Xu hướng của vật chống lại sự thay đổi chuyển động",
+            "C) Gia tốc của vật rơi",
+            "D) Lực phản ứng trong Định Luật Thứ Ba của Newton"
+          ],
+          "explanation": "Quán tính là tính chất của vật chất chống lại sự thay đổi chuyển động, như được mô tả trong Định Luật Thứ Nhất của Newton."
+        },
+        {
+          "id": 10,
+          "question": "Nếu một vật 5 kg và một vật 10 kg được đẩy bằng cùng một lực, vật nào sẽ có gia tốc lớn hơn?",
+          "options": [
+            "A) Vật 5 kg",
+            "B) Vật 10 kg",
+            "C) Cả hai có cùng gia tốc",
+            "D) Không vật nào tăng tốc"
+          ],
+          "explanation": "Từ công thức F = ma, với cùng lực, vật có khối lượng nhỏ hơn (5 kg) sẽ có gia tốc lớn hơn."
+        }
+      ],
+      "correct_answers": ["B", "A", "C", "B", "C", "A", "B", "B", "B", "A"],
+      "user_answers": ["B", "C", "C", "B", "A", "A", "B", "C", "B", "A"],
+      "answer_details": [
+        {
+          "question_id": 1,
+          "user_answer": "B",
+          "is_correct": true,
+          "time_taken_seconds": 15,
+          "confidence": "cao"
+        },
+        {
+          "question_id": 2,
+          "user_answer": "C",
+          "is_correct": false,
+          "time_taken_seconds": 25,
+          "confidence": "trung bình"
+        },
+        {
+          "question_id": 3,
+          "user_answer": "C",
+          "is_correct": true,
+          "time_taken_seconds": 10,
+          "confidence": "cao"
+        },
+        {
+          "question_id": 4,
+          "user_answer": "B",
+          "is_correct": true,
+          "time_taken_seconds": 8,
+          "confidence": "cao"
+        },
+        {
+          "question_id": 5,
+          "user_answer": "A",
+          "is_correct": false,
+          "time_taken_seconds": 20,
+          "confidence": "thấp"
+        },
+        {
+          "question_id": 6,
+          "user_answer": "A",
+          "is_correct": true,
+          "time_taken_seconds": 18,
+          "confidence": "trung bình"
+        },
+        {
+          "question_id": 7,
+          "user_answer": "B",
+          "is_correct": true,
+          "time_taken_seconds": 30,
+          "confidence": "trung bình"
+        },
+        {
+          "question_id": 8,
+          "user_answer": "C",
+          "is_correct": false,
+          "time_taken_seconds": 22,
+          "confidence": "thấp"
+        },
+        {
+          "question_id": 9,
+          "user_answer": "B",
+          "is_correct": true,
+          "time_taken_seconds": 12,
+          "confidence": "cao"
+        },
+        {
+          "question_id": 10,
+          "user_answer": "A",
+          "is_correct": true,
+          "time_taken_seconds": 16,
+          "confidence": "trung bình"
+        }
+      ]
+    }
+  ]
+}

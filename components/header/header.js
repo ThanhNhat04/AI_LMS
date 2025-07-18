@@ -18,7 +18,7 @@ function Header() {
     };
 
     return (
-        <AppBar position="static" style={{ marginLeft: '70px', width: 'calc(100% - 70px)' }}>
+        <AppBar position="static" style={{  width: '100%' }}>
             <Toolbar>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                     Khoá học
