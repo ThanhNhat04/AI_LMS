@@ -13,10 +13,13 @@ a {
   --background_1: #ffffff;
   --background_2: #ffffff;
   --icon_1: #676b7b;
-  --main: #0157f8;
-  --maina: #0866ff;
   --text: #1CB0F6;
   --text_400: #676b7b;
+  --blue_primary: #0157f8;
+  --blue_accent: #0866ff;
+  --blue_sky: #1CB0F6;
+  --blue_soft: #5DADE2;
+  --blue_modern: #2D9CDB;
 
   --box: rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px;
   --font_Roboto: "Roboto", sans-serif;
@@ -28,6 +31,7 @@ a {
   font-size: 32px;
   color: var(--main);
   margin-bottom: 15px;
+  
 }
 
 

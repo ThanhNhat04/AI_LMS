@@ -3,7 +3,7 @@
 import { useState, useEffect, memo } from "react";
 import LazyLoad from "react-lazyload";
 import { useRouter } from "next/navigation";
-import IconXMark from "../public/svg/index.js";
+import {IconXMark} from "../../public/svg/index.js";
 
 // ---- API constants and helpers ----
 const BASE_URL = "https://learn.s4h.edu.vn";
@@ -30,7 +30,7 @@ const CourseDialog = ({ open, handleClose, course }) => {
   const handleGoToLesson = () => {
     if (!isLoggedIn()) {
       alert("Bạn cần đăng nhập để truy cập bài học.");
-      router.push(`auth/Login?redirect=/courses/${course.id}`);
+      router.push(`auth/login?redirect=/courses/${course.id}`);
     } else {
       router.push(`/courses/${course.id}`);
     }
@@ -40,7 +40,7 @@ const CourseDialog = ({ open, handleClose, course }) => {
   const handleGoToQuiz = () => {
     if (!isLoggedIn) {
       alert("Bạn cần đăng nhập để truy cập quiz.");
-      router.push(`auth/Login?redirect=/courses/${course.id}/quiz`);
+      router.push(`auth/login?redirect=/courses/${course.id}/quiz`);
     } else {
       router.push(`${course.id}/quiz`);
       handleClose();

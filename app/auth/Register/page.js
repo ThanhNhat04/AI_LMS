@@ -1,12 +1,15 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import '../../../style/globals.css'
+import React, { useState } from "react";
+import "../../../style/globals.css";
+import { IconUser, IconLock } from "../../../public/svg/index.js";
+
+const BASE_URL = " ";
 
 export default function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,198 +18,285 @@ export default function Register() {
     setErrorMessage(null);
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/Register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, full_name: fullName }),
-      })
+      const res = await fetch(`${BASE_URL}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullName, email, password }),
+      });
       if (!res.ok) {
-        const data = await res.json()
-        console.log(data);
+        const data = await res.json();
         setErrorMessage(`Lỗi: ${data.error}`);
-        setIsLoading(false);
-      }
-      else {
-        let d = await res.json()
-        console.log(d);
-
-        window.location.reload()
-        setIsLoading(false)
+      } else {
+        await res.json();
+        alert("Đăng ký thành công!");
+        window.location.href = "/login"; // Chuyển về trang login
       }
     } catch (error) {
-      setErrorMessage(`Lỗi: ${error}`);
-      setIsLoading(false);
+      setErrorMessage(`Lỗi: ${error.message}`);
     }
+    setIsLoading(false);
   };
 
   return (
     <>
-      <div className="register-container">
-        <h1 className='register-title'>ĐĂNG KÝ</h1>
-        {errorMessage && (
-          <div className="register-error-message">
-            {errorMessage}
+      <div className="login-main-bg">
+        <div className="login-wrapper">
+          <div className="login-left">
+            <img
+              src="https://scontent.fsgn15-1.fna.fbcdn.net/v/t39.30808-6/442467313_935888515206980_2723605427967175180_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFVIjy8gJjk9Zc7yaXeSkueqIsocnNTIrSoiyhyc1MitCKc7LCmRStTuyG8QPjaTQPs6Cc6QvSbeL9YCQ-K46Lm&_nc_ohc=gVhpS7PF5DwQ7kNvwHlRG7J&_nc_oc=AdkV2mpVE1V2URpCzp-VqReUd2uAqWdQvDb-dDxxB0RywN8ocMJHKTCr0xKjU0q9B7ttUxBXKTX4kXsA5qU7L0BC&_nc_zt=23&_nc_ht=scontent.fsgn15-1.fna&_nc_gid=F2ARDgydT2s-PzRs6mABEQ&oh=00_AfTbHMOW4beiXO8g8RiXdbWzytve7070jz5SCC47SkdOOw&oe=6886D6D9"
+              alt="Register illustration"
+              className="login-image"
+            />
+          </div>
+          <div className="login-right">
+            <h2 className="login-title">Đăng ký tài khoản</h2>
+            {errorMessage && (
+              <div className="error-message">{errorMessage}</div>
+            )}
+            <form onSubmit={handleSubmit} noValidate className="login-form">
+              <div className="input-group">
+                <span className="input-icon">
+                  <IconUser />
+                </span>
+                <input
+                  type="text"
+                  placeholder="Họ tên"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                  className="login-input"
+                />
+              </div>
+
+              <div className="input-group">
+                <span className="input-icon">
+                  <IconUser />
+                </span>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="login-input"
+                />
+              </div>
+
+              <div className="input-group">
+                <span className="input-icon">
+                  <IconLock />
+                </span>
+                <input
+                  type="password"
+                  placeholder="Mật khẩu"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="login-input"
+                />
+              </div>
+
+              <button type="submit" disabled={isLoading} className="login-btn">
+                {isLoading ? "Đang đăng ký..." : "Đăng ký"}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {isLoading && (
+          <div className="login-backdrop">
+            <div className="loader" />
           </div>
         )}
-
-        <form onSubmit={handleSubmit} noValidate className="register-form">
-          <label htmlFor="full_name" className="register-label">Họ và tên</label>
-          <input
-            type="text"
-            id="full_name"
-            name="full_name"
-            required
-            autoComplete="name"
-            placeholder="Nhập họ và tên"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="register-input"
-          />
-          <label htmlFor="email" className="register-label">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            autoComplete="email"
-            placeholder="Nhập email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="register-input"
-          />
-          <label htmlFor="password" className="register-label">Mật khẩu</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            autoComplete="new-password"
-            placeholder="Nhập mật khẩu"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="register-input"
-          />
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="register-btn"
-          >
-            {isLoading ? 'Đang đăng ký...' : 'Đăng ký'}
-          </button>
-        </form>
       </div>
-      {isLoading && (
-        <div className="register-backdrop">
-          <div className="register-loader" />
-        </div>
-      )}
+
       <style>{`
-        .register-container {
-          min-width: 350px;
-          max-width: 400px;
-          width: 100%;
+        .login-main-bg {
+          min-height: 100vh;
+          width: 100vw;
+          background: var(--bg-gradient);
           display: flex;
-          flex-direction: column;
           align-items: center;
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          padding: 40px 32px 32px 32px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-          border-radius: 16px;
-          background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+          justify-content: center;
         }
-        .register-title {
-          font-size: 2rem;
-          font-weight: 700;
-          color: #3b82f6;
-          margin-bottom: 24px;
-          letter-spacing: 1px;
+
+        .login-wrapper {
+          width: 900px;
+          max-width: 98vw;
+          height: 500px;
+          background: white;
+          border-radius: 18px;
+          box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+          display: flex;
+          overflow: hidden;
         }
-        .register-error-message {
-          color: #ef4444;
-          background: #fee2e2;
-          border-radius: 6px;
-          padding: 8px 12px;
-          margin-bottom: 16px;
-          width: 100%;
-          text-align: center;
-          font-size: 0.95rem;
-        }
-        .register-form {
-          width: 100%;
+        .login-left {
+          flex: 1.2;
+          background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+          text-align: center;
         }
-        .register-label {
-          font-size: 1rem;
-          font-weight: 500;
-          color: #374151;
-          margin-bottom: 4px;
-          margin-left: 2px;
+        .login-image {
+          max-width: 100%;
+          height: 100%;
+          object-fit: cover;      
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .register-input {
-          width: 100%;
-          padding: 10px 12px;
-          border-radius: 6px;
-          border: 1px solid #cbd5e1;
-          background: #f1f5f9;
-          font-size: 1rem;
-          transition: border 0.2s;
-        }
-        .register-input:focus {
-          outline: none;
-          border: 1.5px solid #3b82f6;
+        .login-right {
+          flex: 1;
           background: #fff;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 36px 32px;
         }
-        .register-btn {
+
+        .login-title {
+          color: #000;
+          font-size: 2rem;
+          font-weight: 600;
+          margin-bottom: 24px;
+        }
+        .login-form {
+          width: 100%;
+          max-width: 320px;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+
+        .input-group {
+          display: flex;
+          align-items: center;
+          background: #f3f6fd;
+          border-radius: 8px;
+          padding: 0 12px;
+          border: 1.5px solid #e0e7ff;
+        }
+
+        .input-icon {
+          font-size: 1.2rem;
+          color: #7f53ac;
+          margin-right: 8px;
+          display: flex;
+          align-items: center;
+        }
+
+        .login-input {
+          border: none;
+          background: transparent;
+          outline: none;
+          padding: 12px 0;
+          width: 100%;
+          font-size: 1rem;
+          color: #333;
+        }
+
+        .login-input::placeholder {
+          color: #b4b4b4;
+        }
+
+        .login-options {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.95rem;
+          margin-top: -8px;
+        }
+
+        .remember-me {
+          color: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .forgot-link {
+          color: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+          text-decoration: none;
+          font-weight: 500;
+          transition: text-decoration 0.2s;
+        }
+
+        .forgot-link:hover {
+          text-decoration: underline;
+        }
+
+        .login-btn {
           width: 100%;
           padding: 12px 0;
-          background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+          background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
           border-radius: 8px;
           text-align: center;
           cursor: pointer;
           font-weight: 600;
-          font-size: 1.1rem;
           color: white;
           border: none;
-          margin-top: 18px;
+          font-size: 1.05rem;
           box-shadow: 0 2px 8px rgba(59,130,246,0.08);
-          transition: background 0.2s, box-shadow 0.2s;
+          transition: background 0.2s, transform 0.1s;
+          margin-top: 10px;
         }
-        .register-btn:disabled {
+
+        .login-btn:disabled {
           cursor: not-allowed;
           opacity: 0.7;
         }
-        .register-backdrop {
-          color: #fff;
+
+        .error-message {
+          color: #ef4444;
+          background: #fee2e2;
+          border: 1px solid #fca5a5;
+          border-radius: 6px;
+          padding: 8px 12px;
+          font-size: 1rem;
+          width: 100%;
+          text-align: center;
+          animation: shake 0.2s;
+        }
+
+        .login-backdrop {
           z-index: 999;
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(59,130,246,0.15);
+          background: rgba(0,0,0,0.25);
           display: flex;
           align-items: center;
           justify-content: center;
         }
-        .register-loader {
-          border: 5px solid #e0e7ff;
-          border-top: 5px solid #3b82f6;
+
+        .loader {
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid #7f53ac;
           border-radius: 50%;
-          width: 48px;
-          height: 48px;
+          width: 44px;
+          height: 44px;
           animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
           0% { transform: rotate(0deg);}
           100% { transform: rotate(360deg);}
+        }
+
+        @keyframes shake {
+          0% { transform: translateX(0); }
+          25% { transform: translateX(-4px); }
+          50% { transform: translateX(4px); }
+          75% { transform: translateX(-4px); }
+          100% { transform: translateX(0); }
         }
       `}</style>
     </>
   );
 }
-

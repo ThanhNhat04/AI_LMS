@@ -1,4 +1,5 @@
 import "@/style/globals.css";
+import Header from "../../components/header/header.js";
 
 export const metadata = {
   title: "Hệ thống chấm điểm tự động",
@@ -6,10 +7,9 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>
-        <main>{children}</main>
-      </body>
-    </html>
+    <>
+      <Header />
+      <main>{children}</main>
+    </>
   );
 }

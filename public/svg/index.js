@@ -1,4 +1,3 @@
-// IconXMark.js
 import React from 'react';
 
 export const IconXMark = ({ width = 24, height = 24, className = "", style = {} }) => (
@@ -9,7 +8,7 @@ export const IconXMark = ({ width = 24, height = 24, className = "", style = {} 
     height={height}
     className={`${className}`}
     style={{
-      backgroundColor: "white",
+      backgroundColor: "none",
       padding: "8px",
       border: "none",
       outline: "none",
@@ -30,7 +29,7 @@ export const IconUser = ({ width = 24, height = 24, className = "", style = {} }
     height={height}
     className={className}
     style={{
-      backgroundColor: "white",
+      backgroundColor: "none",
       padding: "8px",
       border: "none",
       outline: "none",
@@ -51,7 +50,7 @@ export const IconLock = ({ width = 24, height = 24, className = "", style = {} }
     height={height}
     className={className}
     style={{
-      backgroundColor: "white",
+      backgroundColor: "none",
       padding: "8px",
       border: "none",
       outline: "none",
