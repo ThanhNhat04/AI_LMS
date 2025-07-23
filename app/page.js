@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState, useEffect, memo } from 'react';
-import LazyLoad from 'react-lazyload';
-import { useRouter } from 'next/navigation';
-import IconXMark from '../public/svg/index.js'; 
-import { Alert } from '@mui/material';
+import { useState, useEffect, memo } from "react";
+import LazyLoad from "react-lazyload";
+import { useRouter } from "next/navigation";
+import IconXMark from "../public/svg/index.js";
+
 // ---- API constants and helpers ----
-const BASE_URL = 'https://learn.s4h.edu.vn';
+const BASE_URL = "https://learn.s4h.edu.vn";
 const TOKEN = process.env.NEXT_PUBLIC_MOODLE_TOKEN;
 
 const getCoursesUrl = () =>
@@ -14,126 +14,160 @@ const getCoursesUrl = () =>
 
 const getCourseImageUrl = (course) =>
   course.overviewfiles?.[0]?.fileurl
-    ? course.overviewfiles[0].fileurl + '?token=' + TOKEN
-    : 'https://img.freepik.com/free-vector/paper-style-white-monochrome-background_23-2149009213.jpg';
+    ? course.overviewfiles[0].fileurl + "?token=" + TOKEN
+    : "https://img.freepik.com/free-vector/paper-style-white-monochrome-background_23-2149009213.jpg";
 
 // ---- Components ----
 const CourseDialog = ({ open, handleClose, course }) => {
-    const router = useRouter();
+  const router = useRouter();
+  if (!open) return null;
 
-    if (!open) return null;
+//Check if user is login
+  const isLoggedIn = () => {
+    return !!localStorage.getItem("token");
+  };
 
-    const handleGoToLesson = () => {
-        router.push(`${course.id}`);
-        handleClose();
-    };
+  const handleGoToLesson = () => {
+    if (!isLoggedIn()) {
+      alert("Bạn cần đăng nhập để truy cập bài học.");
+      router.push(`auth/Login?redirect=/courses/${course.id}`);
+    } else {
+      router.push(`/courses/${course.id}`);
+    }
+    handleClose();
+  };
 
-    const handleGoToQuiz = () => {
-        router.push(`${course.id}/quiz`);
-        handleClose();
-    };
+  const handleGoToQuiz = () => {
+    if (!isLoggedIn) {
+      alert("Bạn cần đăng nhập để truy cập quiz.");
+      router.push(`auth/Login?redirect=/courses/${course.id}/quiz`);
+    } else {
+      router.push(`${course.id}/quiz`);
+      handleClose();
+    }
+  };
 
-    return (
-        <div className="dialog-overlay">
-            <div className="dialog-content enhanced-dialog">
-                <div className="dialog-header">
-                    <span>{course.displayname}</span>
-                    <button className="close-btn" onClick={handleClose} aria-label="Đóng">
-                        <IconXMark />
-                    </button>
-                </div>
-                <div className="dialog-body">
-                    <img
-                        className="dialog-img"
-                        src={getCourseImageUrl(course)}
-                        alt={course.displayname}
-                    />
-                    <div className="dialog-actions">
-                        <button className="dialog-btn" onClick={handleGoToLesson}>Bài học</button>
-                        <button className="dialog-btn" onClick={handleGoToQuiz}>Quizz</button>
-                        <button className="dialog-btn" onClick={() => alert('Đang phát triển')}>Tạo Quizz</button>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="dialog-overlay">
+      <div className="dialog-content enhanced-dialog">
+        <div className="dialog-header">
+          <span>{course.displayname}</span>
+          <button className="close-btn" onClick={handleClose} aria-label="Đóng">
+            <IconXMark />
+          </button>
         </div>
-    );
+        <div className="dialog-body">
+          <img
+            className="dialog-img"
+            src={getCourseImageUrl(course)}
+            alt={course.displayname}
+          />
+          <div className="dialog-actions">
+            <button className="dialog-btn" onClick={handleGoToLesson}>
+              Bài học
+            </button>
+            <button className="dialog-btn" onClick={handleGoToQuiz}>
+              Quizz
+            </button>
+            <button
+              className="dialog-btn"
+              onClick={() => alert("Đang phát triển")}
+            >
+              Tạo Quizz
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const CourseCard = memo(({ course }) => {
-    const [open, setOpen] = useState(false);
-    const [randomStudents] = useState(() => Math.floor(Math.random() * (35 - 10 + 1)) + 10);
+  const [open, setOpen] = useState(false);
+  const [randomStudents] = useState(
+    () => Math.floor(Math.random() * (35 - 10 + 1)) + 10
+  );
 
-    const handleClickOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-    return (
-        <>
-            <div className="course-card" onClick={handleClickOpen}>
-                <LazyLoad height={180} offset={100}>
-                    <img
-                        className="course-img"
-                        src={getCourseImageUrl(course)}
-                        alt=" "
-                    />
-                </LazyLoad>
-                <div className="course-status">Đang diễn ra</div>
-                <div className="course-content">
-                    <div>{course.displayname}</div>
-                    <div style={{ color: "#888" }}>
-                        {new Date(course.startdate * 1000).toLocaleDateString()} - {new Date(course.enddate * 1000).toLocaleDateString()}
-                    </div>
-                    <div>Đã học: 2 / 25 buổi</div>
-                    <div>
-                        <span role="img" aria-label="students">👥</span> {randomStudents}/ 40
-                    </div>
-                </div>
-            </div>
-            <CourseDialog open={open} handleClose={handleClose} course={course} />
-        </>
-    );
+  return (
+    <>
+      <div className="course-card" onClick={handleClickOpen}>
+        <LazyLoad height={180} offset={100}>
+          <img className="course-img" src={getCourseImageUrl(course)} alt=" " />
+        </LazyLoad>
+        <div className="course-status">Đang diễn ra</div>
+        <div className="course-content">
+          <div>{course.displayname}</div>
+          <div style={{ color: "#888" }}>
+            {new Date(course.startdate * 1000).toLocaleDateString()} -{" "}
+            {new Date(course.enddate * 1000).toLocaleDateString()}
+          </div>
+          <div>Đã học: 2 / 25 buổi</div>
+          <div>
+            <span role="img" aria-label="students">
+              👥
+            </span>{" "}
+            {randomStudents}/ 40
+          </div>
+        </div>
+      </div>
+      <CourseDialog open={open} handleClose={handleClose} course={course} />
+    </>
+  );
 });
 
 export default function CourseManager() {
-    const [value, setValue] = useState(0);
-    const [courses, setCourses] = useState([]);
+  const [value, setValue] = useState(0);
+  const [courses, setCourses] = useState([]);
 
-    const handleChange = (newValue) => setValue(newValue);
+  const handleChange = (newValue) => setValue(newValue);
 
-    useEffect(() => {
-        const fetchCourses = async () => {
-            const url = getCoursesUrl();
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                setCourses(data.courses);
-            } catch (error) {
-                console.error('Error fetching courses:', error);
-            }
-        };
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const url = getCoursesUrl();
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        setCourses(data.courses);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
 
-        fetchCourses();
-    }, []);
+    fetchCourses();
+  }, []);
 
-    return (
-        <div className="main-container">
-            <div className="tabs">
-                <button className={value === 0 ? "tab active" : "tab"} onClick={() => handleChange(0)}>
-                    Tất cả ({courses.length})
-                </button>
-                <button className={value === 1 ? "tab active" : "tab"} onClick={() => handleChange(1)}>
-                    Đang diễn ra (11)
-                </button>
-                <button className={value === 2 ? "tab active" : "tab"} onClick={() => handleChange(2)}>
-                    Kết thúc (14)
-                </button>
-            </div>
-            <div className="courses-grid">
-                {courses.map((course, index) => (
-                    <CourseCard key={index} course={course} />
-                ))}
-            </div>
-            <style>{`
+  return (
+    <div className="main-container">
+      <div className="tabs">
+        <button
+          className={value === 0 ? "tab active" : "tab"}
+          onClick={() => handleChange(0)}
+        >
+          Tất cả ({courses.length})
+        </button>
+        <button
+          className={value === 1 ? "tab active" : "tab"}
+          onClick={() => handleChange(1)}
+        >
+          Đang diễn ra (11)
+        </button>
+        <button
+          className={value === 2 ? "tab active" : "tab"}
+          onClick={() => handleChange(2)}
+        >
+          Kết thúc (14)
+        </button>
+      </div>
+      <div className="courses-grid">
+        {courses.map((course, index) => (
+          <CourseCard key={index} course={course} />
+        ))}
+      </div>
+      <style>{`
                 .main-container {
                     background: #fff;
                     border-radius: 12px;
@@ -291,6 +325,6 @@ export default function CourseManager() {
                     color: #1a639eff;
                 }
             `}</style>
-        </div>
-    );
+    </div>
+  );
 }
