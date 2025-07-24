@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import "../../../style/globals.css";
 import { IconUser, IconLock } from "../../../public/svg/index.js";
 
-const BASE_URL = " ";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ;
 
 export default function Register() {
   const [fullName, setFullName] = useState("");
