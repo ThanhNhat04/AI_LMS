@@ -7,7 +7,9 @@ export default function QuizForm({
   editingIndex,
   handleClear,
   quizTitle,
+  setQuizTitle,
   quizDescription,
+  setQuizDescription,
 }) {
   return (
     <div className="quiz-form">
@@ -18,7 +20,7 @@ export default function QuizForm({
         <input
           type="text"
           value={quizTitle}
-          onChange={(e) => handleChange("title", e.target.value)}
+          onChange={(e) => setQuizTitle(e.target.value)}
           placeholder="Nhập tên bài trắc nghiệm..."
         />
       </div>
@@ -28,7 +30,7 @@ export default function QuizForm({
         <textarea
           rows="2"
           value={quizDescription}
-          onChange={(e) => handleChange("description", e.target.value)}
+          onChange={(e) => setQuizDescription(e.target.value)}
           placeholder=""
         />
       </div>
@@ -200,11 +202,11 @@ export default function QuizForm({
           }
         }
           .form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  box-sizing: border-box;
-}
+          .form-group textarea,
+          .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+          }
       `}</style>
     </div>
   );

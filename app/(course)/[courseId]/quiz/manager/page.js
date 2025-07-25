@@ -1,17 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import QuizMeta from "./ui/quizzMeta";
 import QuizPreview from "./ui/quizzReview";
 import QuizForm from "./ui/quizzFrom";
 
 export default function QuizBuilderPage() {
-  const [quizTitle, setQuizTitle] = useState("");
-  const [quizDescription, setQuizDescription] = useState("");
-  const [isStarted, setIsStarted] = useState(false);
   const [quizList, setQuizList] = useState([]);
-
   const [editingIndex, setEditingIndex] = useState(null);
   const [menuIndex, setMenuIndex] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [quizTitle, setQuizTitle] = useState("");
+  const [quizDescription, setQuizDescription] = useState("");
 
   const [form, setForm] = useState({
     question: "",
@@ -22,18 +20,36 @@ export default function QuizBuilderPage() {
 
   useEffect(() => {
     const stored = localStorage.getItem("custom_quiz");
-    if (stored) setQuizList(JSON.parse(stored));
+    if (stored) {
+      try {
+        setQuizList(JSON.parse(stored));
+      } catch (err) {
+        console.error("Lỗi khi parse localStorage:", err);
+      }
+    }
+    setIsInitialized(true);
+  }, []);
 
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem("custom_quiz", JSON.stringify(quizList));
+    }
+  }, [quizList, isInitialized]);
+
+  useEffect(() => {
     const storedTitle = localStorage.getItem("quiz_title");
     const storedDesc = localStorage.getItem("quiz_description");
     if (storedTitle) setQuizTitle(storedTitle);
     if (storedDesc) setQuizDescription(storedDesc);
-    if (storedTitle) setIsStarted(true);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("custom_quiz", JSON.stringify(quizList));
-  }, [quizList]);
+    localStorage.setItem("quiz_title", quizTitle);
+  }, [quizTitle]);
+
+  useEffect(() => {
+    localStorage.setItem("quiz_description", quizDescription);
+  }, [quizDescription]);
 
   const handleChange = (field, value) => {
     if (field.startsWith("option")) {
@@ -89,16 +105,6 @@ export default function QuizBuilderPage() {
     }
   };
 
-  const handleStart = () => {
-    if (!quizTitle.trim()) {
-      alert("Vui lòng nhập tên quiz!");
-      return;
-    }
-    localStorage.setItem("quiz_title", quizTitle);
-    localStorage.setItem("quiz_description", quizDescription);
-    setIsStarted(true);
-  };
-
   const handleEdit = (idx) => {
     const q = quizList[idx];
     const options = q.options.map((opt) => opt.split(") ")[1]);
@@ -123,39 +129,30 @@ export default function QuizBuilderPage() {
 
   return (
     <div className="quiz-container">
-      {!isStarted ? (
-        <QuizMeta
+      <div className="quiz-layout">
+        <QuizForm
+          form={form}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          editingIndex={editingIndex}
+          handleClear={handleClear}
           quizTitle={quizTitle}
-          quizDescription={quizDescription}
           setQuizTitle={setQuizTitle}
+          quizDescription={quizDescription}
           setQuizDescription={setQuizDescription}
-          handleStart={handleStart}
         />
-      ) : (
-        <>
-          <div className="quiz-layout">
-            <QuizForm
-              form={form}
-              handleChange={handleChange}
-              handleSubmit={handleSubmit}
-              editingIndex={editingIndex}
-              handleClear={handleClear}
-              quizTitle={quizTitle}
-              quizDescription={quizDescription}
-            />
-            <QuizPreview
-              quizList={quizList}
-              handleEdit={handleEdit}
-              handleDelete={handleDelete}
-              menuIndex={menuIndex}
-              setMenuIndex={setMenuIndex}
-            />
-          </div>
-        </>
-      )}
+
+        <QuizPreview
+          quizList={quizList}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          menuIndex={menuIndex}
+          setMenuIndex={setMenuIndex}
+        />
+      </div>
       <style>{`
         .quiz-container {
-          max-width: 1600px;
+          max-width: 1800px;
           margin: 40px auto;
           padding: 24px;
           background: var(--background-color, #f5f5f5);
@@ -164,87 +161,11 @@ export default function QuizBuilderPage() {
           font-family: sans-serif;
         }
 
-        h2 {
-          text-align: center;
-          color: #000000ff;
-        }
-
         .quiz-layout {
           display: flex;
           flex-direction: row;
           gap: 32px;
           margin-top: 24px;
-        }
-
-        input,
-        textarea,
-        select {
-          width: 100%;
-          padding: 10px;
-          font-size: 16px;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-        }
-
-        label {
-          font-weight: bold;
-          display: block;
-          margin-bottom: 6px;
-        }
-
-        .btn {
-          margin: 10px 10px 0 0;
-          padding: 10px 20px;
-          background: #1976d2;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-        }
-
-        .btn.clear {
-          background: #d32f2f;
-        }
-
-        .quiz-item {
-          background: #fff;
-          padding: 16px;
-          border-radius: 8px;
-          margin-bottom: 12px;
-          border-left: 4px solid #1976d2;
-        }
-
-        .menu-button {
-          background: transparent;
-          border: none;
-          font-size: 20px;
-          cursor: pointer;
-          padding: 4px;
-        }
-
-        .dropdown-menu {
-          position: absolute;
-          top: 24px;
-          right: 0;
-          background: white;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-          z-index: 10;
-        }
-
-        .dropdown-menu button {
-          display: block;
-          width: 100%;
-          padding: 8px 12px;
-          border: none;
-          background: none;
-          text-align: left;
-          cursor: pointer;
-        }
-
-        .dropdown-menu button:hover {
-          background: #f5f5f5;
         }
 
         @media (max-width: 768px) {
