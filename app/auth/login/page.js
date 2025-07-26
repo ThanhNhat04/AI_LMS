@@ -3,36 +3,41 @@
 import React, { useState } from "react";
 import "../../../style/globals.css";
 import { IconUser, IconLock } from "../../../public/svg/index.js";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ;
+const BASE_URL = process.env.NEXT_PUBLIC_DOMAIN_AGENT;
 
-export default function Register() {
-  const [fullName, setFullName] = useState("");
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setErrorMessage(null);
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/register`, {
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, password }),
+        body: JSON.stringify({ email, password }),
       });
+
       if (!res.ok) {
         const data = await res.json();
-        setErrorMessage(`Lỗi: ${data.error}`);
+        console.error("Lỗi đăng nhập:", data);
+        // TODO: hiển thị thông báo lỗi
       } else {
-        await res.json();
-        alert("Đăng ký thành công!");
-        window.location.href = "/login"; // Chuyển về trang login
+        const data = await res.json();
+        
+        localStorage.setItem("token", data.access_token); 
+        router.push(redirect); 
       }
     } catch (error) {
-      setErrorMessage(`Lỗi: ${error.message}`);
+      console.error("Login error:", error);
     }
     setIsLoading(false);
   };
@@ -44,61 +49,61 @@ export default function Register() {
           <div className="login-left">
             <img
               src="https://scontent.fsgn15-1.fna.fbcdn.net/v/t39.30808-6/442467313_935888515206980_2723605427967175180_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFVIjy8gJjk9Zc7yaXeSkueqIsocnNTIrSoiyhyc1MitCKc7LCmRStTuyG8QPjaTQPs6Cc6QvSbeL9YCQ-K46Lm&_nc_ohc=gVhpS7PF5DwQ7kNvwHlRG7J&_nc_oc=AdkV2mpVE1V2URpCzp-VqReUd2uAqWdQvDb-dDxxB0RywN8ocMJHKTCr0xKjU0q9B7ttUxBXKTX4kXsA5qU7L0BC&_nc_zt=23&_nc_ht=scontent.fsgn15-1.fna&_nc_gid=F2ARDgydT2s-PzRs6mABEQ&oh=00_AfTbHMOW4beiXO8g8RiXdbWzytve7070jz5SCC47SkdOOw&oe=6886D6D9"
-              alt="Register illustration"
+              alt="Login illustration"
               className="login-image"
             />
           </div>
           <div className="login-right">
-            <h2 className="login-title">Đăng ký tài khoản</h2>
-            {errorMessage && (
-              <div className="error-message">{errorMessage}</div>
-            )}
+            <h2 className="login-title">Đăng nhập</h2>
             <form onSubmit={handleSubmit} noValidate className="login-form">
               <div className="input-group">
                 <span className="input-icon">
                   <IconUser />
                 </span>
                 <input
-                  type="text"
-                  placeholder="Họ tên"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                  className="login-input"
-                />
-              </div>
-
-              <div className="input-group">
-                <span className="input-icon">
-                  <IconUser />
-                </span>
-                <input
                   type="email"
+                  id="email"
+                  name="email"
+                  required
+                  autoComplete="email"
+                  autoFocus
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
                   className="login-input"
                 />
               </div>
-
               <div className="input-group">
                 <span className="input-icon">
                   <IconLock />
                 </span>
                 <input
                   type="password"
-                  placeholder="Mật khẩu"
+                  id="password"
+                  name="password"
+                  required
+                  autoComplete="current-password"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
                   className="login-input"
                 />
               </div>
-
+              <div className="login-options">
+                <label className="remember-me">
+                  <input type="checkbox" style={{ accentColor: "#7f53ac" }} />{" "}
+                  Remember
+                </label>
+                <a href="#" className="forgot-link">
+                  Forgot password?
+                </a>
+              </div>
               <button type="submit" disabled={isLoading} className="login-btn">
-                {isLoading ? "Đang đăng ký..." : "Đăng ký"}
+                {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
               </button>
+              <a href="/auth/register" className="register-link">
+                Chưa có tài khoản? Đăng ký ngay
+              </a>
             </form>
           </div>
         </div>

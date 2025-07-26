@@ -36,9 +36,9 @@ export default function QuizPage() {
   return (
     <div className="quiz-wrapper">
       <div className="quiz-container">
-        <h2 className="quiz-title">Trắc nghiệm đã tạo</h2>
+        <h2 className="quiz-title">Bài tập</h2>
         {quizData.length === 0 ? (
-          <div>Không có dữ liệu câu hỏi trong localStorage.</div>
+          <div>Hiện tại chưa có bài tập bài tập nào được tạo</div>
         ) : (
           quizData.map((q, idx) => (
             <div key={idx} className="quiz-question">
@@ -213,7 +213,7 @@ export default function QuizPage() {
         .quiz-result {
           border-radius: 8px;
           padding: 16px;
-          background: #e3f2fd;
+          background: #e3f2fd; 
           margin-top: 28px;
           font-size: 22px;
           color: #388e3c;

@@ -3,7 +3,7 @@
 import { useState, useEffect, memo } from "react";
 import LazyLoad from "react-lazyload";
 import { useRouter } from "next/navigation";
-import {IconXMark} from "../../public/svg/index.js";
+import { IconXMark } from "../../public/svg/index.js";
 
 // ---- API constants and helpers ----
 const BASE_URL = "https://learn.s4h.edu.vn";
@@ -22,7 +22,7 @@ const CourseDialog = ({ open, handleClose, course }) => {
   const router = useRouter();
   if (!open) return null;
 
-//Check if user is login
+  //Check if user is login
   const isLoggedIn = () => {
     return !!localStorage.getItem("token");
   };
@@ -43,6 +43,16 @@ const CourseDialog = ({ open, handleClose, course }) => {
       router.push(`auth/login?redirect=/courses/${course.id}/quiz`);
     } else {
       router.push(`${course.id}/quiz`);
+      handleClose();
+    }
+  };
+
+  const handletoManager = () => {
+    if (!isLoggedIn()) {
+      alert("Bạn cần đăng nhập để truy cập quản lý khóa học.");
+      router.push(`auth/login?redirect=/courses/${course.id}/manager`);
+    } else {
+      router.push(`/courses/${course.id}/quiz/manager`);
       handleClose();
     }
   };
@@ -69,10 +79,7 @@ const CourseDialog = ({ open, handleClose, course }) => {
             <button className="dialog-btn" onClick={handleGoToQuiz}>
               Quizz
             </button>
-            <button
-              className="dialog-btn"
-              onClick={() => alert("Đang phát triển")}
-            >
+            <button className="dialog-btn" onClick={handletoManager}>
               Tạo Quizz
             </button>
           </div>
