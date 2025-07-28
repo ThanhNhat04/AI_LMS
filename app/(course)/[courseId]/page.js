@@ -1,18 +1,8 @@
 'use client'
 import * as React from 'react';
 import { useParams } from 'next/navigation';
+import { getCourseContentsUrl, getPagesByCoursesUrl } from '@/lib/api.js';
 
-// ---- API constants and helpers ----
-const BASE_URL = 'https://learn.s4h.edu.vn';
-const TOKEN = process.env.NEXT_PUBLIC_MOODLE_TOKEN;
-
-const getCourseContentsUrl = (courseId) =>
-  `${BASE_URL}/webservice/rest/server.php?wstoken=${TOKEN}&wsfunction=core_course_get_contents&courseid=${courseId}&moodlewsrestformat=json`;
-
-const getPagesByCoursesUrl = (courseId) =>
-  `${BASE_URL}/webservice/rest/server.php?wstoken=${TOKEN}&wsfunction=mod_page_get_pages_by_courses&courseids[0]=${courseId}&moodlewsrestformat=json`;
-
-// ---- Component ----
 const courseContent = React.memo(() => {
   const params = useParams();
   const courseId = params.courseId;

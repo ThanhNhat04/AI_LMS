@@ -5,10 +5,7 @@ import CourseCard from "@/components/courseCard/courseCard.js";
 import { getCoursesUrl } from "@/lib/api.js";
 
 export default function CourseManager() {
-  const [value, setValue] = useState(0);
   const [courses, setCourses] = useState([]);
-
-  const handleChange = (newValue) => setValue(newValue);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -26,29 +23,13 @@ export default function CourseManager() {
 
   return (
     <div className="main-container">
-      <div className="tabs">
-        <button
-          className={value === 0 ? "tab active" : "tab"}
-          onClick={() => handleChange(0)}
-        >
-          Tất cả ({courses.length})
-        </button>
-        <button
-          className={value === 1 ? "tab active" : "tab"}
-          onClick={() => handleChange(1)}
-        >
-          Đang diễn ra (11)
-        </button>
-        <button
-          className={value === 2 ? "tab active" : "tab"}
-          onClick={() => handleChange(2)}
-        >
-          Kết thúc (14)
-        </button>
-      </div>
       <div className="courses-grid">
         {courses.map((course, index) => (
-          <CourseCard key={index} course={course} />
+          <CourseCard
+            key={index}
+            course={course}
+            onClick={(course) => alert(`Clicked on ${course.displayname}`)}
+          />
         ))}
       </div>
 
