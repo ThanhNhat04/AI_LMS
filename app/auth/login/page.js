@@ -29,11 +29,10 @@ export default function Login() {
       if (!res.ok) {
         const data = await res.json();
         console.error("Lỗi đăng nhập:", data);
-        // TODO: hiển thị thông báo lỗi
       } else {
         const data = await res.json();
-        
         localStorage.setItem("token", data.access_token); 
+        localStorage.setItem("role", data.user.role);
         router.push(redirect); 
       }
     } catch (error) {
@@ -48,7 +47,7 @@ export default function Login() {
         <div className="login-wrapper">
           <div className="login-left">
             <img
-              src="https://scontent.fsgn15-1.fna.fbcdn.net/v/t39.30808-6/442467313_935888515206980_2723605427967175180_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFVIjy8gJjk9Zc7yaXeSkueqIsocnNTIrSoiyhyc1MitCKc7LCmRStTuyG8QPjaTQPs6Cc6QvSbeL9YCQ-K46Lm&_nc_ohc=gVhpS7PF5DwQ7kNvwHlRG7J&_nc_oc=AdkV2mpVE1V2URpCzp-VqReUd2uAqWdQvDb-dDxxB0RywN8ocMJHKTCr0xKjU0q9B7ttUxBXKTX4kXsA5qU7L0BC&_nc_zt=23&_nc_ht=scontent.fsgn15-1.fna&_nc_gid=F2ARDgydT2s-PzRs6mABEQ&oh=00_AfTbHMOW4beiXO8g8RiXdbWzytve7070jz5SCC47SkdOOw&oe=6886D6D9"
+              src="https://techvccloud.mediacdn.vn/280518386289090560/2024/12/27/lms-la-gi-17352880315861002847300-0-0-416-740-crop-17352880372491119566492.jpg"
               alt="Login illustration"
               className="login-image"
             />

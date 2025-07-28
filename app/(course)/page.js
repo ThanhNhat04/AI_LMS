@@ -17,12 +17,18 @@ const getCourseImageUrl = (course) =>
     ? course.overviewfiles[0].fileurl + "?token=" + TOKEN
     : "https://img.freepik.com/free-vector/paper-style-white-monochrome-background_23-2149009213.jpg";
 
-// ---- Components ----
+// ---- Course Dialog Component ----
 const CourseDialog = ({ open, handleClose, course }) => {
   const router = useRouter();
+  
+  const [role, setRole] = useState(null);
+  useEffect(() => {
+    const checkRole = localStorage.getItem("role").replace(/^"|"$/g, "");
+    setRole(checkRole);
+  }, []);
+
   if (!open) return null;
 
-  //Check if user is login
   const isLoggedIn = () => {
     return !!localStorage.getItem("token");
   };
@@ -30,9 +36,9 @@ const CourseDialog = ({ open, handleClose, course }) => {
   const handleGoToLesson = () => {
     if (!isLoggedIn()) {
       alert("Bạn cần đăng nhập để truy cập bài học.");
-      router.push(`auth/login?redirect=/courses/${course.id}`);
+      router.push(`auth/login?redirect=/${course.id}`);
     } else {
-      router.push(`/courses/${course.id}`);
+      router.push(`/${course.id}`);
     }
     handleClose();
   };
@@ -40,7 +46,7 @@ const CourseDialog = ({ open, handleClose, course }) => {
   const handleGoToQuiz = () => {
     if (!isLoggedIn) {
       alert("Bạn cần đăng nhập để truy cập quiz.");
-      router.push(`auth/login?redirect=/courses/${course.id}/quiz`);
+      router.push(`auth/login?redirect=/${course.id}/quiz`);
     } else {
       router.push(`${course.id}/quiz`);
       handleClose();
@@ -49,10 +55,10 @@ const CourseDialog = ({ open, handleClose, course }) => {
 
   const handletoManager = () => {
     if (!isLoggedIn()) {
-      alert("Bạn cần đăng nhập để truy cập quản lý khóa học.");
-      router.push(`auth/login?redirect=/courses/${course.id}/manager`);
+      alert("Bạn cần đăng nhập để truy cập quản lý quizz");
+      router.push(`auth/login?redirect=/${course.id}/manager`);
     } else {
-      router.push(`/courses/${course.id}/quiz/manager`);
+      router.push(`/${course.id}/quiz/manager`);
       handleClose();
     }
   };
@@ -79,9 +85,11 @@ const CourseDialog = ({ open, handleClose, course }) => {
             <button className="dialog-btn" onClick={handleGoToQuiz}>
               Quizz
             </button>
-            <button className="dialog-btn" onClick={handletoManager}>
-              Tạo Quizz
-            </button>
+            {role === "teacher" && (
+              <button className="dialog-btn" onClick={handletoManager}>
+                Tạo Quizz
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -94,7 +102,6 @@ const CourseCard = memo(({ course }) => {
   const [randomStudents] = useState(
     () => Math.floor(Math.random() * (35 - 10 + 1)) + 10
   );
-
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -125,6 +132,7 @@ const CourseCard = memo(({ course }) => {
   );
 });
 
+// ---- Main Component ----
 export default function CourseManager() {
   const [value, setValue] = useState(0);
   const [courses, setCourses] = useState([]);

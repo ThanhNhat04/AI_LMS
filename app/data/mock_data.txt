@@ -18,7 +18,7 @@
             "C) Nó sẽ tăng tốc",
             "D) Nó sẽ thay đổi hướng"
           ],
-          "explanation": "Định Luật Thứ Nhất của Newton nói rằng một vật đang chuyển động sẽ tiếp tục chuyển động với cùng tốc độ và hướng trừ khi có lực không cân bằng tác dụng."
+          "explanation": "Định Luật Thứ Nhmanagerất của Newton nói rằng một vật đang chuyển động sẽ tiếp tục chuyển động với cùng tốc độ và hướng trừ khi có lực không cân bằng tác dụng."
         },
         {
           "id": 2,
