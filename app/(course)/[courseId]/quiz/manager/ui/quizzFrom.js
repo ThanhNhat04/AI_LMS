@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 export default function QuizForm({
@@ -6,63 +7,85 @@ export default function QuizForm({
   handleSubmit,
   editingIndex,
   handleClear,
-  quizTitle,
-  setQuizTitle,
-  quizDescription,
-  setQuizDescription,
+  article,
 }) {
   return (
     <div className="quiz-form">
-      <h1 className="quiz-title">Thêm câu hỏi trắc nghiệm</h1>
-
       <div className="form-group">
-        <label>Tên bài trắc nghiệm:</label>
+        <label>Tiêu đề bài đọc:</label>
         <input
           type="text"
-          value={quizTitle}
-          onChange={(e) => setQuizTitle(e.target.value)}
-          placeholder="Nhập tên bài trắc nghiệm..."
+          value={article.title}
+          onChange={(e) => handleChange("article_title", e.target.value)}
+          placeholder="Nhập tiêu đề bài đọc..."
         />
       </div>
 
       <div className="form-group">
-        <label>Mô tả bài trắc nghiệm:</label>
+        <label>Nội dung bài đọc:</label>
         <textarea
-          rows="2"
-          value={quizDescription}
-          onChange={(e) => setQuizDescription(e.target.value)}
-          placeholder=""
+          rows="4"
+          value={article.content}
+          onChange={(e) => handleChange("article_content", e.target.value)}
+          placeholder="Nhập nội dung bài đọc..."
         />
+      </div>
+
+      <div className="form-group">
+        <label>Chủ đề:</label>
+        <input
+          type="text"
+          value={article.subject}
+          onChange={(e) => handleChange("article_subject", e.target.value)}
+          placeholder="VD: Toán học, Khoa học..."
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Độ khó:</label>
+        <select
+          value={article.difficulty}
+          onChange={(e) => handleChange("article_difficulty", e.target.value)}
+        >
+          <option value="">-- Chọn độ khó --</option>
+          <option value="dễ">Dễ</option>
+          <option value="trung bình">Trung bình</option>
+          <option value="khó">Khó</option>
+        </select>
       </div>
 
       <hr />
 
+      <h2 className="quiz-title">
+        {editingIndex !== null ? "Chỉnh sửa câu hỏi" : "Thêm câu hỏi ôn tập"}
+      </h2>
+
       <div className="form-group">
-        <label>Nhập nội dung câu hỏi:</label>
+        <label>Câu hỏi:</label>
         <textarea
-          rows="2"
+          rows="3"
           value={form.question}
           onChange={(e) => handleChange("question", e.target.value)}
-          placeholder="Nhập câu hỏi tại đây..."
+          placeholder="Nhập câu hỏi..."
         />
       </div>
 
-      <div className="flex-row answers">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="answer-input">
-            <span className="option-label">{String.fromCharCode(65 + i)})</span>
+      <div className="answers">
+        {form.options.map((opt, idx) => (
+          <div className="answer-input" key={idx}>
+            <span className="option-label">{String.fromCharCode(65 + idx)}:</span>
             <input
               type="text"
-              value={form.options[i]}
-              onChange={(e) => handleChange(`option_${i}`, e.target.value)}
-              placeholder={`Nhập đáp án ${String.fromCharCode(65 + i)}...`}
+              value={opt}
+              onChange={(e) => handleChange(`option_${idx}`, e.target.value)}
+              placeholder={`Đáp án ${String.fromCharCode(65 + idx)}`}
             />
           </div>
         ))}
       </div>
 
       <div className="form-group">
-        <label>Chọn đáp án đúng:</label>
+        <label>Đáp án đúng:</label>
         <select
           value={form.answer}
           onChange={(e) => handleChange("answer", e.target.value)}
@@ -75,21 +98,21 @@ export default function QuizForm({
       </div>
 
       <div className="form-group">
-        <label>Giải thích đáp án:</label>
+        <label>Giải thích:</label>
         <textarea
-          rows="2"
+          rows="3"
           value={form.explanation}
           onChange={(e) => handleChange("explanation", e.target.value)}
-          placeholder="Nhập giải thích nếu có..."
+          placeholder="Nhập giải thích nếu có"
         />
       </div>
 
       <div className="form-actions">
         <button className="btn primary" onClick={handleSubmit}>
-          {editingIndex !== null ? "Lưu chỉnh sửa" : "Thêm câu hỏi"}
+          {editingIndex !== null ? "Cập nhật câu hỏi" : "Thêm câu hỏi"}
         </button>
         <button className="btn danger" onClick={handleClear}>
-          Xoá toàn bộ
+          Xóa tất cả câu hỏi
         </button>
       </div>
 
@@ -102,7 +125,7 @@ export default function QuizForm({
         }
 
         .quiz-title {
-          font-size: 28px;
+          font-size: 24px;
           font-weight: bold;
           margin-bottom: 24px;
           text-align: center;
@@ -201,12 +224,13 @@ export default function QuizForm({
             flex-direction: column;
           }
         }
-          .form-group input,
-          .form-group textarea,
-          .form-group select {
-            width: 100%;
-            box-sizing: border-box;
-          }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+          width: 100%;
+          box-sizing: border-box;
+        }
       `}</style>
     </div>
   );

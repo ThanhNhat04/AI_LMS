@@ -1,10 +1,63 @@
 "use client";
-
 import { useState, useEffect } from "react";
+import LessonResult from "../resultquiz/index.js"; // Đường dẫn đến component LessonResult
 
 export default function AIAgentPage() {
+  const getDefaultArticle = () => ({
+    title: "Các Định Luật Newton về Chuyển Động",
+    content: `...`, // giữ nguyên content như trước
+    subject: "vật lý",
+    difficulty: "trung bình",
+  });
+
+  const getStoredResultData = () => {
+    if (typeof window === "undefined") return null;
+    const raw = localStorage.getItem("result_data_quizz");
+    try {
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const getAccessToken = () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("token");
+  };
+
+  const buildInitialMessage = () => {
+    const stored = getStoredResultData();
+    const defaultArticle = getDefaultArticle();
+
+    if (!stored) {
+      return {
+        study_sessions: [
+          {
+            article: defaultArticle,
+            questions: [],
+            correct_answers: [],
+            user_answers: [],
+            answer_details: [],
+          },
+        ],
+      };
+    }
+
+    return {
+      study_sessions: [
+        {
+          article: stored.article || defaultArticle,
+          questions: stored.questions || [],
+          correct_answers: stored.correct_answers || [],
+          user_answers: stored.user_answers || [],
+          answer_details: stored.answer_details || [],
+        },
+      ],
+    };
+  };
+
   const [message, setMessage] = useState(
-    "Tôi đang học về phương trình bậc 2, có thể giải thích cho tôi được không?"
+    JSON.stringify(buildInitialMessage(), null, 2)
   );
   const [response, setResponse] = useState("");
   const [sessionId, setSessionId] = useState("");
@@ -12,19 +65,20 @@ export default function AIAgentPage() {
   const [loading, setLoading] = useState(false);
   const [selectedSession, setSelectedSession] = useState(null);
 
-  const getAccessToken = () => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("token");
-  };
-
   const handleSend = async () => {
     setLoading(true);
     setResponse("");
     setSessionId("");
 
     try {
-      const accessToken = getAccessToken();
+      const parsedMessage = JSON.parse(message);
+      const article =
+        parsedMessage.study_sessions?.[0]?.article || getDefaultArticle();
+      if (article) {
+        localStorage.setItem("custom_quiz_article", JSON.stringify(article));
+      }
 
+      const accessToken = getAccessToken();
       const res = await fetch("http://192.168.10.221:8000/api/agent/process", {
         method: "POST",
         headers: {
@@ -51,17 +105,12 @@ export default function AIAgentPage() {
   const fetchSessions = async () => {
     try {
       const accessToken = getAccessToken();
-
       const res = await fetch("http://192.168.10.221:8000/api/agent/sessions", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       if (!res.ok) throw new Error("Lỗi gọi API /sessions");
-
       const data = await res.json();
-      console.log("Sessions:", data);
       setSessions(data.sessions || []);
     } catch (err) {
       console.error("Lỗi khi lấy sessions:", err);
@@ -76,68 +125,42 @@ export default function AIAgentPage() {
     <div className="agent-container">
       <h1 className="agent-title">Trợ lý AI</h1>
 
-      <textarea
-        className="agent-textarea"
-        rows={4}
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-
-      <button className="agent-button" onClick={handleSend} disabled={loading}>
-        {loading ? "Đang gửi..." : "Gửi yêu cầu"}
-      </button>
-
-      {response && (
-        <div className="agent-response">
-          <p>
-            <strong>AI:</strong> {response}
-          </p>
-          <p className="session-id">Session ID: {sessionId}</p>
+      <div className="agent-main">
+        {/* Cột trái: lịch sử */}
+        <div className="agent-sessions">
+          <h2>Lịch sử phiên AI</h2>
+          {sessions.length > 0 ? (
+            <ul>
+              {sessions.map((s, idx) => (
+                <li
+                  key={idx}
+                  className="agent-session-item"
+                  onClick={() => setSelectedSession(s)}
+                >
+                  <strong>ID:</strong> {s._id}
+                  <br />
+                  <span className="session-time">
+                    {new Date(s.created_at).toLocaleString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Chưa có phiên nào.</p>
+          )}
         </div>
-      )}
 
-      <div className="agent-sessions">
-        <h2>Lịch sử phiên AI</h2>
-        {sessions.length > 0 ? (
-          <ul>
-            {sessions.map((s, idx) => (
-              <li
-                key={idx}
-                className="agent-session-item"
-                onClick={() => setSelectedSession(s)}
-              >
-                <strong>ID:</strong> {s._id}
-                <br />
-                <span className="session-time">
-                  {new Date(s.created_at).toLocaleString()}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Chưa có phiên nào.</p>
-        )}
-
-        {selectedSession && (
-          <div className="agent-session-detail">
-            <h3>Chi tiết phiên</h3>
-            <p>
-              <strong>Input:</strong> {selectedSession.input_messages}
-            </p>
-            {/* <p><strong>Response:</strong> {JSON.stringify(selectedSession.user_response)}</p> */}
-            <pre>
-              <code>
-                {JSON.stringify(selectedSession.user_response, null, 2)}
-              </code>
-            </pre>
-          </div>
-        )}
+        <div className="agent-result">
+          {selectedSession ? (
+            <LessonResult lessonData={selectedSession.user_response} />
+          ) : (
+            <p>Chọn một phiên để xem kết quả.</p>
+          )}
+        </div>
       </div>
 
       <style>{`
         .agent-container {
-          max-width: 700px;
-          margin: 0 auto;
           padding: 2rem;
           font-family: Arial, sans-serif;
         }
@@ -147,55 +170,24 @@ export default function AIAgentPage() {
           margin-bottom: 1rem;
           color: #1e3a8a;
         }
-        .agent-textarea {
-          width: 100%;
-          padding: 1rem;
-          font-size: 16px;
-          border-radius: 10px;
-          border: 1px solid #ccc;
-          margin-bottom: 1rem;
-          resize: vertical;
-        }
-        .agent-button {
-          background-color: #2563eb;
-          color: white;
-          padding: 0.75rem 1.5rem;
-          border: none;
-          border-radius: 8px;
-          font-size: 16px;
-          cursor: pointer;
-        }
-        .agent-button:disabled {
-          background-color: #93c5fd;
-          cursor: not-allowed;
-        }
-        .agent-response {
-          background-color: #f3f4f6;
-          border-radius: 10px;
-          padding: 1rem;
-          margin-top: 1.5rem;
-        }
-        .session-id {
-          font-size: 0.875rem;
-          color: #6b7280;
+        .agent-main {
+          display: flex;
+          gap: 2rem;
         }
         .agent-sessions {
-          margin-top: 2rem;
-        }
-        .agent-sessions h2 {
-          font-size: 20px;
-          margin-bottom: 1rem;
-          color: #374151;
+          flex: 1;
+          border-right: 1px solid #ccc;
+          padding-right: 1rem;
         }
         .agent-sessions ul {
-          list-style-type: disc;
-          padding-left: 1.5rem;
+          list-style: none;
+          padding: 0;
         }
         .agent-session-item {
-          margin-bottom: 0.5rem;
           background: #f9fafb;
           padding: 0.75rem;
           border-radius: 8px;
+          margin-bottom: 0.5rem;
           cursor: pointer;
           transition: background 0.2s;
         }
@@ -206,17 +198,11 @@ export default function AIAgentPage() {
           font-size: 0.875rem;
           color: #6b7280;
         }
-        .agent-session-detail {
-          margin-top: 1.5rem;
-          background-color: #f0fdf4;
-          border: 1px solid #86efac;
+        .agent-result {
+          flex: 2;
+          background: #f3f4f6;
           padding: 1rem;
           border-radius: 10px;
-        }
-        .agent-session-detail h3 {
-          font-size: 18px;
-          margin-bottom: 0.5rem;
-          color: #166534;
         }
       `}</style>
     </div>

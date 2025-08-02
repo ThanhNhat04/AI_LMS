@@ -1,10 +1,38 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 
 export default function QuizPage() {
   const [quizData, setQuizData] = useState([]);
   const [selected, setSelected] = useState([]);
   const [showResult, setShowResult] = useState(false);
+  const [article, setArticle] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedQuiz = localStorage.getItem("custom_quiz");
+    const storedArticle = localStorage.getItem("custom_quiz_article");
+
+    if (storedQuiz) {
+      try {
+        const parsed = JSON.parse(storedQuiz);
+        setQuizData(parsed);
+        setSelected(Array(parsed.length).fill(null));
+      } catch (err) {
+        console.error("Lỗi khi parse custom_quiz:", err);
+      }
+    }
+
+    if (storedArticle) {
+      try {
+        const parsedArticle = JSON.parse(storedArticle);
+        setArticle(parsedArticle);
+      } catch (err) {
+        console.error("Lỗi khi parse custom_quiz_article:", err);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem("custom_quiz");
@@ -33,59 +61,42 @@ export default function QuizPage() {
     return acc + (selectedOption?.startsWith(correctLetter) ? 1 : 0);
   }, 0);
 
-  //Gợi ý AI
-  // Hàm này sẽ được gọi khi người dùng nhấn nút "Gợi ý
   const handleAIClick = () => {
-
-    const sessionId = "session_001"; // hoặc sinh random nếu muốn
-
-    const article = {
-      title: "Các Định Luật Newton về Chuyển Động",
-      content: `Các Định Luật Newton về Chuyển Động là ba nguyên lý cơ bản mô tả mối quan hệ giữa các lực tác dụng lên vật thể và chuyển động của nó.
-
-Definh Luật Thứ Nhất (Định Luật Quán Tính): Một vật đang đứng yên sẽ tiếp tục đứng yên, và một vật đang chuyển động sẽ tiếp tục chuyển động với cùng tốc độ và hướng, trừ khi có lực không cân bằng tác dụng lên nó.
-
-Định Luật Thứ Hai: Gia tốc của vật thể tỉ lệ thuận với lực tổng hợp tác dụng lên nó và tỉ lệ nghịch với khối lượng của nó. Điều này được biểu diễn qua công thức F = ma, trong đó F là lực, m là khối lượng, và a là gia tốc.
-
-Định Luật Thứ Ba: Với mỗi tác dụng, có một phản tác dụng bằng và ngược chiều. Khi một vật tác dụng lực lên vật thứ hai, vật thứ hai đồng thời tác dụng lại một lực có độ lớn bằng nhau nhưng ngược hướng lên vật thứ nhất.
-
-Những định luật này tạo thành nền tảng của cơ học cổ điển và giúp chúng ta hiểu cách các vật thể chuyển động trong thế giới hàng ngày.`,
-      subject: "vật lý",
-      difficulty: "trung bình",
+    const usedArticle = article ?? {
+      title: "",
+      content: "",
+      subject: "",
+      difficulty: "",
     };
 
     const correctAnswers = quizData.map((q) => q.answer);
-
     const userAnswers = selected.map((selIdx, i) => {
       if (selIdx == null) return null;
-      return quizData[i].options[selIdx][0]; // Lấy ký tự A/B/C/D từ đầu chuỗi
+      return quizData[i].options[selIdx][0];
     });
 
     const answerDetails = quizData.map((q, i) => {
       const correctLetter = q.answer;
       const userIdx = selected[i];
       const userAnswer = userIdx != null ? q.options[userIdx][0] : null;
-      const isCorrect = userAnswer === correctLetter;
-
       return {
         question_id: q.id ?? i + 1,
         user_answer: userAnswer,
-        is_correct: isCorrect,
-        // time_taken_seconds: Math.floor(Math.random() * 30) + 5, // hoặc có thể lưu time thực
-        confidence: "trung bình", // hoặc có thể cho người dùng chọn
+        is_correct: userAnswer === correctLetter,
+        confidence: "trung bình",
       };
     });
 
-    const output = {
-      session_id: sessionId,
-      article,
+    const resultData = {
+      article: usedArticle,
       questions: quizData,
       correct_answers: correctAnswers,
       user_answers: userAnswers,
       answer_details: answerDetails,
     };
 
-    console.log("Cấu trúc gửi lên AI:", output);
+    localStorage.setItem("result_data_quizz", JSON.stringify(resultData));
+    router.push("/2/quiz/result");
   };
 
   return (

@@ -8,8 +8,13 @@ export default function QuizBuilderPage() {
   const [editingIndex, setEditingIndex] = useState(null);
   const [menuIndex, setMenuIndex] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [quizTitle, setQuizTitle] = useState("");
-  const [quizDescription, setQuizDescription] = useState("");
+
+  const [article, setArticle] = useState({
+    title: "",
+    content: "",
+    subject: "",
+    difficulty: "",
+  });
 
   const [form, setForm] = useState({
     question: "",
@@ -37,28 +42,36 @@ export default function QuizBuilderPage() {
   }, [quizList, isInitialized]);
 
   useEffect(() => {
-    const storedTitle = localStorage.getItem("quiz_title");
-    const storedDesc = localStorage.getItem("quiz_description");
-    if (storedTitle) setQuizTitle(storedTitle);
-    if (storedDesc) setQuizDescription(storedDesc);
+    const storedArticle = localStorage.getItem("custom_quiz_article");
+    if (storedArticle) {
+      try {
+        setArticle(JSON.parse(storedArticle));
+      } catch (err) {
+        console.error("Lỗi khi parse article:", err);
+      }
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("quiz_title", quizTitle);
-  }, [quizTitle]);
+    if (isInitialized) {
+      localStorage.setItem("custom_quiz_article", JSON.stringify(article));
+    }
+  }, [article, isInitialized]);
 
-  useEffect(() => {
-    localStorage.setItem("quiz_description", quizDescription);
-  }, [quizDescription]);
-
-  const handleChange = (field, value) => {
-    if (field.startsWith("option")) {
-      const index = parseInt(field.split("_")[1]);
-      const updatedOptions = [...form.options];
-      updatedOptions[index] = value;
-      setForm({ ...form, options: updatedOptions });
+  const handleChange = (key, value) => {
+    if (key.startsWith("option_")) {
+      const index = parseInt(key.split("_")[1]);
+      const newOptions = [...form.options];
+      newOptions[index] = value;
+      setForm({ ...form, options: newOptions });
+    } else if (key.startsWith("article_")) {
+      const field = key.replace("article_", "");
+      setArticle({
+        ...article,
+        [field]: value,
+      });
     } else {
-      setForm({ ...form, [field]: value });
+      setForm({ ...form, [key]: value });
     }
   };
 
@@ -136,10 +149,7 @@ export default function QuizBuilderPage() {
           handleSubmit={handleSubmit}
           editingIndex={editingIndex}
           handleClear={handleClear}
-          quizTitle={quizTitle}
-          setQuizTitle={setQuizTitle}
-          quizDescription={quizDescription}
-          setQuizDescription={setQuizDescription}
+          article={article}
         />
 
         <QuizPreview
