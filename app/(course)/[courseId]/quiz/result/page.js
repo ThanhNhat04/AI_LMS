@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import LessonResult from "../resultquiz/index.js"; // Đường dẫn đến component LessonResult
+import LessonResult from "../resultquiz/index.js"; 
 
 export default function AIAgentPage() {
   const getDefaultArticle = () => ({
     title: "Các Định Luật Newton về Chuyển Động",
-    content: `...`, // giữ nguyên content như trước
+    content: `...`,
     subject: "vật lý",
     difficulty: "trung bình",
   });
@@ -72,8 +72,11 @@ export default function AIAgentPage() {
 
     try {
       const parsedMessage = JSON.parse(message);
-      const article =
-        parsedMessage.study_sessions?.[0]?.article || getDefaultArticle();
+      //Định dạng mark down
+      const defMess = "lưu ý định dạng toàn bộ phản hồi bằng Markdown hợp lệ, sử dụng ký tự xuống dòng \n để phân tách các đoạn văn và các mục trong danh sách. Đảm bảo mỗi mục trong danh sách (bắt đầu bằng * hoặc -) nằm trên một dòng riêng";
+      const mess = defMess + message
+      const article = parsedMessage.study_sessions?.[0]?.article || getDefaultArticle();
+
       if (article) {
         localStorage.setItem("custom_quiz_article", JSON.stringify(article));
       }
@@ -85,7 +88,7 @@ export default function AIAgentPage() {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ messages: message }),
+        body: JSON.stringify({ messages: mess }),
       });
 
       if (!res.ok) throw new Error("Lỗi gọi API");
