@@ -3,12 +3,10 @@ import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useRouter } from "next/navigation";
-
 
 function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -17,10 +15,12 @@ function Header() {
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleLogOut = () => {
     localStorage.removeItem("token", "role");
     router.push("/auth/login");
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -28,12 +28,16 @@ function Header() {
   return (
     <AppBar position="static" style={{ width: "100%" }}>
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Khoá học
-        </Typography>
-        <div>
+        <img
+          src="/images/logo.png"
+          alt="Khoá học"
+          style={{ height: 40, cursor: "pointer" }}
+          onClick={() => router.push("/")} 
+        />
+
+        <div style={{ marginLeft: "auto" }}>
           <IconButton onClick={handleMenu} color="inherit">
-            <Avatar></Avatar>
+            <Avatar />
           </IconButton>
           <Menu
             anchorEl={anchorEl}

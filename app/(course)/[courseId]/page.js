@@ -1,8 +1,10 @@
 'use client'
 import * as React from 'react';
 import { useParams } from 'next/navigation';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { getCourseContentsUrl, getPagesByCoursesUrl } from '@/lib/api.js';
-import {IframeWrapper} from '@/utils/helper.js'
+import { IframeWrapper } from '@/utils/helper.js'
 
 
 const courseContent = React.memo(() => {
@@ -10,11 +12,8 @@ const courseContent = React.memo(() => {
   const courseId = params.courseId;
 
   const [courseData, setCourseData] = React.useState([]);
-  const [selectedContent, setSelectedContent] = React.useState(null);
   const [pagesData, setPagesData] = React.useState([]);
   const [selectedPageContent, setSelectedPageContent] = React.useState(null);
-  const [selectedPageName, setSelectedPageName] = React.useState('');
-  const [selectedContentName, setSelectedContentName] = React.useState('');
   const [expandedSections, setExpandedSections] = React.useState({});
 
   React.useEffect(() => {
@@ -43,7 +42,6 @@ const courseContent = React.memo(() => {
         localStorage.setItem('pagesData', JSON.stringify(data.pages));
         if (data.pages && data.pages.length > 0) {
           setSelectedPageContent(data.pages[0].content);
-          setSelectedPageName(data.pages[0].name);
         }
       } catch (error) {
         console.error('Error fetching pages:', error);
@@ -59,7 +57,6 @@ const courseContent = React.memo(() => {
     const page = pagesData.find(p => p.id === pageId);
     if (page) {
       setSelectedPageContent(page.content);
-      setSelectedPageName(page.name);
       localStorage.setItem('selectedPageContent', page.content);
       localStorage.setItem('selectedPageName', page.name);
     }
@@ -76,23 +73,12 @@ const courseContent = React.memo(() => {
     <div className="course-content-container">
       {/* Nội dung chính */}
       <div className="course-content-main">
-        {selectedPageContent || selectedContent ? (
+        {selectedPageContent ? (
           <div className="course-content-detail">
-            {selectedPageContent ? (
-              <>
-                <IframeWrapper html={selectedPageContent} />
-                <hr className="divider" />
-                <div className="module-title">{selectedPageName}</div>
-              </>
-            ) : (
-              <>
-                <div>{selectedContent}</div>
-                <hr className="divider" />
-                <div className="module-title">{selectedContentName}</div>
-              </>
-            )}
+            <IframeWrapper html={selectedPageContent} />
           </div>
         ) : null}
+
       </div>
 
       {/* Sidebar khóa học */}
@@ -108,7 +94,13 @@ const courseContent = React.memo(() => {
               onClick={() => toggleSection(section.id)}
             >
               <span className="section-name">{section.name}</span>
-              <span className="section-toggle">{expandedSections[section.id] ? '▲' : '▼'}</span>
+              <span className="section-toggle">
+                {expandedSections[section.id] ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowUpIcon />
+                )}
+              </span>
             </div>
             {expandedSections[section.id] && (
               <ul className="module-list">
@@ -139,37 +131,22 @@ const courseContent = React.memo(() => {
           background: white;
         }
         .course-content-main {
-          flex: 2 1 90%;
-          min-width: 1000px;
+          flex: 2 1 100%;
+          min-width: 1100px;
           width:auto; 
-          display: flex;
-          align-items: flex-start;
-          justify-content: center;
-          height: calc(100vh - 200px); 
-          overflow-y: auto;
+          height: 100vh; 
           background: white;
         }
         .course-content-detail {
           padding: 32px 10px;
           width: 100%;
-          overflow: auto;
+          overflow-y: auto;
           text-align: center;
           min-height: 340px;
           display: flex;
           align-items: center;
           justify-content: center;
           flex-direction: column;
-        }
-        .divider {
-          margin: 28px 0;
-          border: none;
-          border-top: 2px solid #1976d2;
-        }
-        .module-title {
-          margin-top: 18px;
-          font-weight: bold;
-          font-size: 22px;
-          color: #1976d2;
         }
         .course-content-sidebar {
           flex: 1 1 35%;
@@ -183,7 +160,9 @@ const courseContent = React.memo(() => {
           font-size: 24px;
           font-weight: 700;
           color: #1976d2;
-          padding: 15px
+          padding: 15px;
+          border: 1px solid #d0e2ff;
+          margin: 5px 0;
         }
         .section-box {
           margin-bottom: 5px;
@@ -200,6 +179,7 @@ const courseContent = React.memo(() => {
           font-size: 18px;
           font-weight: 600;
           color: black;
+          
         }
         .section-name {
           font-weight: bold;
