@@ -14,6 +14,7 @@ export const hasAnyRole = (roles = []) => {
   const userRole = getUserRole();
   return roles.includes(userRole);
 };
+aster
 // Role cụ thể
 export const isAdmin = () => hasRole("admin");
 export const isTeacher = () => hasRole("teacher");

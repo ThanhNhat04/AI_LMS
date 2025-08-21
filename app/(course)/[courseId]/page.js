@@ -1,17 +1,20 @@
 'use client'
 import * as React from 'react';
 import { useParams } from 'next/navigation';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { getCourseContentsUrl, getPagesByCoursesUrl } from '@/lib/api.js';
+import { IframeWrapper } from '@/utils/helper.js';
 
 const courseContent = React.memo(() => {
   const params = useParams();
   const courseId = params.courseId;
 
   const [courseData, setCourseData] = React.useState([]);
-  const [selectedContent, setSelectedContent] = React.useState(null);
   const [pagesData, setPagesData] = React.useState([]);
   const [selectedPageContent, setSelectedPageContent] = React.useState(null);
   const [selectedPageName, setSelectedPageName] = React.useState('');
+  const [selectedContent, setSelectedContent] = React.useState(null);
   const [selectedContentName, setSelectedContentName] = React.useState('');
   const [expandedSections, setExpandedSections] = React.useState({});
 
@@ -20,12 +23,8 @@ const courseContent = React.memo(() => {
       const url = getCourseContentsUrl(courseId);
       try {
         const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        console.log('Fetched course contents:', data);
-        
         if (Array.isArray(data)) {
           setCourseData(data);
           localStorage.setItem('courseData', JSON.stringify(data));
@@ -41,9 +40,7 @@ const courseContent = React.memo(() => {
       const url = getPagesByCoursesUrl(courseId);
       try {
         const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         setPagesData(data.pages);
         localStorage.setItem('pagesData', JSON.stringify(data.pages));
@@ -55,14 +52,14 @@ const courseContent = React.memo(() => {
         console.error('Error fetching pages:', error);
       }
     };
+
     fetchCourseContents();
     fetchPagesByCourses();
   }, [courseId]);
 
-  const handleModuleClick = async (module) => {
+  const handleModuleClick = (module) => {
     const pageId = module.instance;
     const page = pagesData.find(p => p.id === pageId);
-
     if (page) {
       setSelectedPageContent(page.content);
       setSelectedPageName(page.name);
@@ -74,20 +71,21 @@ const courseContent = React.memo(() => {
   };
 
   const toggleSection = (sectionId) => {
-    setExpandedSections(prevState => ({
-      ...prevState,
-      [sectionId]: !prevState[sectionId]
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId]
     }));
   };
 
   return (
     <div className="course-content-container">
+      {/* Nội dung chính */}
       <div className="course-content-main">
         {selectedPageContent || selectedContent ? (
           <div className="course-content-detail">
             {selectedPageContent ? (
               <>
-                <div dangerouslySetInnerHTML={{ __html: selectedPageContent }} />
+                <IframeWrapper html={selectedPageContent} />
                 <hr className="divider" />
                 <div className="module-title">{selectedPageName}</div>
               </>
@@ -101,8 +99,13 @@ const courseContent = React.memo(() => {
           </div>
         ) : null}
       </div>
+
+      {/* Sidebar khóa học */}
       <div className="course-content-sidebar">
-        <h2 className="sidebar-title">Chi tiết khóa học</h2>
+        <div className="sidebar-header">
+          <h2 className="sidebar-title">Nội dung khóa học</h2>
+        </div>
+
         {courseData.map(section => (
           <div key={section.id} className="section-box">
             <div
@@ -110,12 +113,22 @@ const courseContent = React.memo(() => {
               onClick={() => toggleSection(section.id)}
             >
               <span className="section-name">{section.name}</span>
-              <span className="section-toggle">{expandedSections[section.id] ? '▲' : '▼'}</span>
+              <span className="section-toggle">
+                {expandedSections[section.id] ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowUpIcon />
+                )}
+              </span>
             </div>
             {expandedSections[section.id] && (
               <ul className="module-list">
                 {section.modules.map(module => (
-                  <li key={module.id} className="module-item" onClick={() => handleModuleClick(module)}>
+                  <li
+                    key={module.id}
+                    className="module-item"
+                    onClick={() => handleModuleClick(module)}
+                  >
                     {module.name}
                   </li>
                 ))}
@@ -124,13 +137,17 @@ const courseContent = React.memo(() => {
           </div>
         ))}
       </div>
+
       <style>{`
+        body {
+          overflow-y: hidden;
+        }
         .course-content-container {
           display: flex;
           gap: 40px;
           width: 100%;
           margin: 40px auto 0 auto;
-          max-width: 1600px; /* tăng chiều rộng tổng */
+          max-width: 1600px;
           background: linear-gradient(135deg, #e3f0ff 0%, #f8fafc 100%);
           border-radius: 5px;
           box-shadow: 0 8px 32px rgba(25, 118, 210, 0.10);
@@ -138,7 +155,7 @@ const courseContent = React.memo(() => {
         }
         .course-content-main {
           flex: 2 1 60%;
-          min-width: 1000px; /* tăng chiều rộng phần nội dung chính */
+          min-width: 1000px;
           display: flex;
           align-items: flex-start;
           justify-content: center;
@@ -150,7 +167,7 @@ const courseContent = React.memo(() => {
           border-radius: 5px;
           box-shadow: 0 4px 24px rgba(25, 118, 210, 0.12);
           overflow: auto;
-          text-align: center; /* căn giữa chữ */
+          text-align: center;
           min-height: 340px;
           display: flex;
           align-items: center;
@@ -178,6 +195,9 @@ const courseContent = React.memo(() => {
           box-shadow: 0 4px 24px rgba(25, 118, 210, 0.10);
           padding: 32px 22px;
           animation: fadeIn 0.7s;
+          height: 100vh;
+          overflow-y: auto;
+          scrollbar-gutter: stable;
         }
         .sidebar-title {
           margin-bottom: 24px;
