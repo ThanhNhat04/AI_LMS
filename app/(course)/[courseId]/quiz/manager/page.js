@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import QuizPreview from "./ui/quizzReview";
-import QuizForm from "./ui/quizzFrom";
+import QuizPreview from "./components/quizzReview";
+import QuizForm from "./components/quizzFrom";
+import { sampleQuizData } from "../../../../data/quizz";
+import { useRouter, useParams } from "next/navigation";
 
 export default function QuizBuilderPage() {
   const [quizList, setQuizList] = useState([]);
@@ -22,6 +24,10 @@ export default function QuizBuilderPage() {
     answer: "A",
     explanation: "",
   });
+
+  
+  const router = useRouter();
+  const params = useParams();
 
   useEffect(() => {
     const stored = localStorage.getItem("custom_quiz");
@@ -139,6 +145,13 @@ export default function QuizBuilderPage() {
       setMenuIndex(null);
     }
   };
+  const handleAddMockup = () => {
+    setArticle(sampleQuizData.article);
+    setQuizList([...quizList, ...sampleQuizData.quizList]);
+  };
+  const handleMoveQuiz = () => {
+    router.push(`/${params.courseId}/quiz`);
+  };
 
   return (
     <div className="quiz-container">
@@ -150,6 +163,8 @@ export default function QuizBuilderPage() {
           editingIndex={editingIndex}
           handleClear={handleClear}
           article={article}
+          handleAddMockup={handleAddMockup}
+          handleMoveQuiz={handleMoveQuiz}
         />
 
         <QuizPreview
@@ -162,7 +177,7 @@ export default function QuizBuilderPage() {
       </div>
       <style>{`
         .quiz-container {
-          max-width: 1800px;
+          max-width: 1600px;
           margin: 40px auto;
           padding: 24px;
           background: var(--background-color, #f5f5f5);

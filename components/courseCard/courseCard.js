@@ -5,15 +5,12 @@ import { getCourseImageUrl } from "@/lib/api.js";
 
 const CourseCard = memo(({ course, onClick }) => {
   const [open, setOpen] = useState(false);
-  const [randomStudents] = useState(
-    () => Math.floor(Math.random() * (35 - 10 + 1)) + 10
-  );
 
   const handleClick = () => {
     if (onClick) {
-      onClick(course); 
+      onClick(course);
     } else {
-      setOpen(true); 
+      setOpen(true);
     }
   };
 
@@ -25,13 +22,9 @@ const CourseCard = memo(({ course, onClick }) => {
         <LazyLoad height={180} offset={100}>
           <img className="course-img" src={getCourseImageUrl(course)} alt=" " />
         </LazyLoad>
-        <div className="course-status">Đang diễn ra</div>
         <div className="course-content">
-          <div>{course.displayname}</div>
-          <div>
-            <span role="img" aria-label="students">👥</span>{" "}
-            {randomStudents}/ 40
-          </div>
+          <div className="course-label">Khóa học</div>
+          <div className="course-title">{course.displayname}</div>
         </div>
       </div>
 
@@ -41,17 +34,29 @@ const CourseCard = memo(({ course, onClick }) => {
 
       <style>{`
         .course-card {
-          height: 300px;
-          width: 400px;
+          min-height: 260px;
+          width: 360px;
           background: #fafafa;
-          border-radius: 8px;
           box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
           overflow: hidden;
           cursor: pointer;
           position: relative;
           margin-bottom: 16px;
           transition: box-shadow 0.2s;
+          border-radius: 8px;
+          flex-direction: column;  
         }
+          .course-label {
+          display: inline-block;
+          padding: 4px 8px;
+          background-color: #E0E7FF; 
+          color: #2563EB;
+          font-size: 12px;
+          font-weight: 500;
+          border-radius: 4px;
+          margin-bottom: 8px;
+        }
+
         .course-card:hover {
           box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);     
         }
@@ -60,20 +65,15 @@ const CourseCard = memo(({ course, onClick }) => {
           height: 200px;
           object-fit: cover;
         }
-        .course-status {
-          position: absolute;
-          top: 0;
-          left: 0;
-          background: rgba(0, 0, 0, 0.5);
-          color: #fff;
-          padding: 4px 10px;
-          border-radius: 0 0 8px 0;
-          font-size: 13px;
-        }
         .course-content {
           padding: 12px;
           min-height: 90px;
         }
+        .course-title {
+          font-weight: bold;
+          font-size: 20px;
+        }
+
       `}</style>
     </>
   );

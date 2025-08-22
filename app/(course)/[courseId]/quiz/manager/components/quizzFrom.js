@@ -8,7 +8,10 @@ export default function QuizForm({
   editingIndex,
   handleClear,
   article,
+  handleAddMockup,
+  handleMoveQuiz,
 }) {
+  
   return (
     <div className="quiz-form">
       <div className="form-group">
@@ -73,7 +76,9 @@ export default function QuizForm({
       <div className="answers">
         {form.options.map((opt, idx) => (
           <div className="answer-input" key={idx}>
-            <span className="option-label">{String.fromCharCode(65 + idx)}:</span>
+            <span className="option-label">
+              {String.fromCharCode(65 + idx)}:
+            </span>
             <input
               type="text"
               value={opt}
@@ -113,6 +118,12 @@ export default function QuizForm({
         </button>
         <button className="btn danger" onClick={handleClear}>
           Xóa tất cả câu hỏi
+        </button>
+        <button className="btn primary" onClick={handleAddMockup}> 
+          Thêm bài tập mẫu
+        </button>
+         <button className="btn primary" onClick={handleMoveQuiz}>
+          Làm bài tập
         </button>
       </div>
 

@@ -5,10 +5,8 @@ import CourseCard from "@/components/courseCard/courseCard.js";
 import { getCoursesUrl } from "@/lib/api.js";
 
 export default function CourseManager() {
-  const [value, setValue] = useState(0);
   const [courses, setCourses] = useState([]);
 
-  const handleChange = (newValue) => setValue(newValue);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -26,26 +24,6 @@ export default function CourseManager() {
 
   return (
     <div className="main-container">
-      <div className="tabs">
-        <button
-          className={value === 0 ? "tab active" : "tab"}
-          onClick={() => handleChange(0)}
-        >
-          Tất cả ({courses.length})
-        </button>
-        <button
-          className={value === 1 ? "tab active" : "tab"}
-          onClick={() => handleChange(1)}
-        >
-          Đang diễn ra (11)
-        </button>
-        <button
-          className={value === 2 ? "tab active" : "tab"}
-          onClick={() => handleChange(2)}
-        >
-          Kết thúc (14)
-        </button>
-      </div>
       <div className="courses-grid">
         {courses.map((course, index) => (
           <CourseCard key={index} course={course} />
@@ -55,29 +33,9 @@ export default function CourseManager() {
       <style>{`
         .main-container {
           background: #fff;
-          border-radius: 12px;
           padding: 16px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
           margin: 40px 20px 0 20px;
           min-height: 800px;
-        }
-        .tabs {
-          display: flex;
-          gap: 12px;
-          margin-bottom: 24px;
-        }
-        .tab {
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          background: #eee;
-          padding: 4px 16px;
-          font-size: 15px;
-          cursor: pointer;
-        }
-        .tab.active {
-          background: #1976d2;
-          color: #fff;
-          border-color: #1976d2;
         }
         .courses-grid {
           display: flex;

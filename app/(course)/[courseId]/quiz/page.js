@@ -196,7 +196,7 @@ export default function QuizPage() {
       <style>{`
         .quiz-wrapper {
           display: flex;
-          max-width: 1200px;
+          max-width: 1600px;
           margin: 48px auto;
           gap: 32px;
           align-items: flex-start;

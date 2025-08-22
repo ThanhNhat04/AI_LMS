@@ -31,14 +31,23 @@ export default function Login() {
         console.error("Lỗi đăng nhập:", data);
       } else {
         const data = await res.json();
-        localStorage.setItem("token", data.access_token); 
+        localStorage.setItem("token", data.access_token);
         localStorage.setItem("role", data.user.role);
-        router.push(redirect); 
+        router.push(redirect);
       }
     } catch (error) {
       console.error("Login error:", error);
     }
     setIsLoading(false);
+  };
+  const quickFill = (role) => {
+    if (role === "teacher") {
+      setEmail("teacher@example.com");
+      setPassword("teacher123");
+    } else {
+      setEmail("student@example.com");
+      setPassword("123456");
+    }
   };
 
   return (
@@ -104,6 +113,25 @@ export default function Login() {
                 Chưa có tài khoản? Đăng ký ngay
               </a>
             </form>
+            <div>
+              {/* ✅ Nút chọn nhanh */}
+              <div className="quick-login">
+                <button
+                  type="button"
+                  onClick={() => quickFill("teacher")}
+                  className="quick-btn"
+                >
+                  Đăng nhập Giáo viên
+                </button>
+                <button
+                  type="button"
+                  onClick={() => quickFill("student")}
+                  className="quick-btn"
+                >
+                  Đăng nhập Học sinh
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -286,6 +314,36 @@ export default function Login() {
           width: 44px;
           height: 44px;
           animation: spin 1s linear infinite;
+        }
+          .quick-login {
+          margin-top: 20px;
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+        }
+
+        .quick-btn {
+          padding: 8px 16px;
+          border-radius: 8px;
+          border: 1.5px solid #66a6ff;
+          background: #f3f6fd;
+          color: #333;
+          font-size: 0.95rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .quick-btn:hover {
+          background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(59,130,246,0.2);
+        }
+
+        .quick-btn:active {
+          transform: scale(0.97);
         }
 
         @keyframes spin {
