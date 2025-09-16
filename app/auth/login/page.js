@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import "../../../style/globals.css";
 import { IconUser, IconLock } from "../../../public/svg/index.js";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_DOMAIN_AGENT;
 
-export default function Login() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +18,8 @@ export default function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // setIsLoading(true);
+    setIsLoading(true);
+
     try {
       const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
@@ -38,111 +39,112 @@ export default function Login() {
     } catch (error) {
       console.error("Login error:", error);
     }
+
     setIsLoading(false);
   };
+
   const quickFill = (role) => {
     if (role === "teacher") {
       setEmail("teacher@example.com");
       setPassword("teacher123");
     } else {
-      setEmail("student@example.com");
-      setPassword("123456");
+      setEmail("student123@example.com");
+      setPassword("student123@example.com");
     }
   };
 
   return (
-    <>
-      <div className="login-main-bg">
-        <div className="login-wrapper">
-          <div className="login-left">
-            <img
-              src="https://techvccloud.mediacdn.vn/280518386289090560/2024/12/27/lms-la-gi-17352880315861002847300-0-0-416-740-crop-17352880372491119566492.jpg"
-              alt="Login illustration"
-              className="login-image"
-            />
-          </div>
-          <div className="login-right">
-            <h2 className="login-title">Đăng nhập</h2>
-            <form onSubmit={handleSubmit} noValidate className="login-form">
-              <div className="input-group">
-                <span className="input-icon">
-                  <IconUser />
-                </span>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  autoComplete="email"
-                  autoFocus
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="login-input"
-                />
-              </div>
-              <div className="input-group">
-                <span className="input-icon">
-                  <IconLock />
-                </span>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  required
-                  autoComplete="current-password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="login-input"
-                />
-              </div>
-              <div className="login-options">
-                <label className="remember-me">
-                  <input type="checkbox" style={{ accentColor: "#7f53ac" }} />{" "}
-                  Remember
-                </label>
-                <a href="#" className="forgot-link">
-                  Forgot password?
-                </a>
-              </div>
-              <button type="submit" disabled={isLoading} className="login-btn">
-                {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
-              </button>
-              <a href="/auth/register" className="register-link">
-                Chưa có tài khoản? Đăng ký ngay
-              </a>
-            </form>
-            <div>
-              {/* ✅ Nút chọn nhanh */}
-              <div className="quick-login">
-                <button
-                  type="button"
-                  onClick={() => quickFill("teacher")}
-                  className="quick-btn"
-                >
-                  Đăng nhập Giáo viên
-                </button>
-                <button
-                  type="button"
-                  onClick={() => quickFill("student")}
-                  className="quick-btn"
-                >
-                  Đăng nhập Học sinh
-                </button>
-              </div>
-            </div>
-          </div>
+    <div className="login-main-bg">
+      <div className="login-wrapper">
+        {/* Left */}
+        <div className="login-left">
+          <img
+            src="https://techvccloud.mediacdn.vn/280518386289090560/2024/12/27/lms-la-gi-17352880315861002847300-0-0-416-740-crop-17352880372491119566492.jpg"
+            alt="Login illustration"
+            className="login-image"
+          />
         </div>
 
-        {isLoading && (
-          <div className="login-backdrop">
-            <div className="loader" />
+        {/* Right */}
+        <div className="login-right">
+          <h2 className="login-title">Đăng nhập</h2>
+          <form onSubmit={handleSubmit} noValidate className="login-form">
+            <div className="input-group">
+              <span className="input-icon">
+                <IconUser />
+              </span>
+              <input
+                type="email"
+                required
+                autoComplete="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="login-input"
+              />
+            </div>
+
+            <div className="input-group">
+              <span className="input-icon">
+                <IconLock />
+              </span>
+              <input
+                type="password"
+                required
+                autoComplete="current-password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="login-input"
+              />
+            </div>
+
+            <div className="login-options">
+              <label className="remember-me">
+                <input type="checkbox" style={{ accentColor: "#7f53ac" }} />{" "}
+                Remember
+              </label>
+              <a href="#" className="forgot-link">
+                Forgot password?
+              </a>
+            </div>
+
+            <button type="submit" disabled={isLoading} className="login-btn">
+              {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+            </button>
+            <a href="/auth/register" className="register-link">
+              Chưa có tài khoản? Đăng ký ngay
+            </a>
+          </form>
+
+          {/* Nút đăng nhập nhanh */}
+          <div className="quick-login">
+            <button
+              type="button"
+              onClick={() => quickFill("teacher")}
+              className="quick-btn"
+            >
+              Đăng nhập Giáo viên
+            </button>
+            <button
+              type="button"
+              onClick={() => quickFill("student")}
+              className="quick-btn"
+            >
+              Đăng nhập Học sinh
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
+      {isLoading && (
+        <div className="login-backdrop">
+          <div className="loader" />
+        </div>
+      )}
+
       <style>{`
+        /* CSS giữ nguyên như bạn viết */
         .login-main-bg {
           min-height: 100vh;
           width: 100vw;
@@ -151,7 +153,6 @@ export default function Login() {
           align-items: center;
           justify-content: center;
         }
-
         .login-wrapper {
           width: 900px;
           max-width: 98vw;
@@ -188,7 +189,6 @@ export default function Login() {
           align-items: center;
           padding: 36px 32px;
         }
-
         .login-title {
           color: #000;
           font-size: 2rem;
@@ -202,7 +202,6 @@ export default function Login() {
           flex-direction: column;
           gap: 18px;
         }
-
         .input-group {
           display: flex;
           align-items: center;
@@ -211,7 +210,6 @@ export default function Login() {
           padding: 0 12px;
           border: 1.5px solid #e0e7ff;
         }
-
         .input-icon {
           font-size: 1.2rem;
           color: #7f53ac;
@@ -219,7 +217,6 @@ export default function Login() {
           display: flex;
           align-items: center;
         }
-
         .login-input {
           border: none;
           background: transparent;
@@ -229,11 +226,9 @@ export default function Login() {
           font-size: 1rem;
           color: #333;
         }
-
         .login-input::placeholder {
           color: #b4b4b4;
         }
-
         .login-options {
           display: flex;
           justify-content: space-between;
@@ -241,26 +236,21 @@ export default function Login() {
           font-size: 0.95rem;
           margin-top: -8px;
         }
-
         .remember-me {
-          color: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
           font-weight: 500;
           display: flex;
           align-items: center;
           gap: 4px;
         }
-
         .forgot-link {
-          color: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+          color: #66a6ff;
           text-decoration: none;
           font-weight: 500;
           transition: text-decoration 0.2s;
         }
-
         .forgot-link:hover {
           text-decoration: underline;
         }
-
         .login-btn {
           width: 100%;
           padding: 12px 0;
@@ -276,12 +266,10 @@ export default function Login() {
           transition: background 0.2s, transform 0.1s;
           margin-top: 10px;
         }
-
         .login-btn:disabled {
           cursor: not-allowed;
           opacity: 0.7;
         }
-
         .error-message {
           color: #ef4444;
           background: #fee2e2;
@@ -293,7 +281,6 @@ export default function Login() {
           text-align: center;
           animation: shake 0.2s;
         }
-
         .login-backdrop {
           z-index: 999;
           position: fixed;
@@ -306,7 +293,6 @@ export default function Login() {
           align-items: center;
           justify-content: center;
         }
-
         .loader {
           border: 4px solid #f3f3f3;
           border-top: 4px solid #7f53ac;
@@ -315,13 +301,12 @@ export default function Login() {
           height: 44px;
           animation: spin 1s linear infinite;
         }
-          .quick-login {
+        .quick-login {
           margin-top: 20px;
           display: flex;
           gap: 12px;
           justify-content: center;
         }
-
         .quick-btn {
           padding: 8px 16px;
           border-radius: 8px;
@@ -334,23 +319,19 @@ export default function Login() {
           transition: all 0.2s ease;
           box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-
         .quick-btn:hover {
           background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
           color: white;
           transform: translateY(-2px);
           box-shadow: 0 4px 10px rgba(59,130,246,0.2);
         }
-
         .quick-btn:active {
           transform: scale(0.97);
         }
-
         @keyframes spin {
           0% { transform: rotate(0deg);}
           100% { transform: rotate(360deg);}
         }
-
         @keyframes shake {
           0% { transform: translateX(0); }
           25% { transform: translateX(-4px); }
@@ -359,6 +340,14 @@ export default function Login() {
           100% { transform: translateX(0); }
         }
       `}</style>
-    </>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

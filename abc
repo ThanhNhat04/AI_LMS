@@ -1,0 +1,50 @@
+# ==========================
+# 1. Build stage
+# ==========================
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Nhận biến từ docker-compose build args
+ARG NEXT_PUBLIC_MOODLE_TOKEN
+ARG NEXT_PUBLIC_MOODLE_URL
+ARG NEXT_PUBLIC_DOMAIN_AGENT
+
+# Xuất biến thành ENV để Next.js đọc được khi build
+ENV NEXT_PUBLIC_MOODLE_TOKEN=$NEXT_PUBLIC_MOODLE_TOKEN
+ENV NEXT_PUBLIC_MOODLE_URL=$NEXT_PUBLIC_MOODLE_URL
+ENV NEXT_PUBLIC_DOMAIN_AGENT=$NEXT_PUBLIC_DOMAIN_AGENT
+
+# Copy package trước để cache dependency
+COPY package*.json ./
+
+# Cài full deps để build
+RUN npm install
+
+# Copy code
+COPY . .
+
+# Build Next.js (tạo standalone + static)
+RUN npm run build
+
+# ==========================
+# 2. Production stage
+# ==========================
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Cài prod dependencies duy nhất
+COPY package*.json ./
+RUN npm install --omit=dev --ignore-scripts && npm cache clean --force
+
+# Copy output standalone từ builder
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+EXPOSE 3000
+
+
+ENV HOSTNAME="0.0.0.0"
+CMD ["node", "server.js"]

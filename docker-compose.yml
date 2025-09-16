@@ -1,0 +1,17 @@
+# version: "3.9"
+
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_MOODLE_TOKEN: ${NEXT_PUBLIC_MOODLE_TOKEN}
+        NEXT_PUBLIC_MOODLE_URL: ${NEXT_PUBLIC_MOODLE_URL}
+        NEXT_PUBLIC_DOMAIN_AGENT: ${NEXT_PUBLIC_DOMAIN_AGENT}
+    container_name: ai_lms_app
+    ports:
+      - "5555:3000"
+    env_file:
+      - .env
+    restart: always
