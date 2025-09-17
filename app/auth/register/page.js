@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import "../../../style/globals.css";
 import { IconUser, IconLock } from "../../../public/svg/index.js";
+import { useRouter } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_DOMAIN_AGENT;
 
@@ -12,6 +13,8 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -29,7 +32,7 @@ export default function Register() {
       } else {
         await res.json();
         alert("Đăng ký thành công!");
-        window.location.href = "auth/login";
+        router.push("/auth/login"); // ✅ chuyển về trang login
       }
     } catch (error) {
       setErrorMessage(`Lỗi: ${error.message}`);
@@ -98,9 +101,13 @@ export default function Register() {
               <button type="submit" disabled={isLoading} className="login-btn">
                 {isLoading ? "Đang đăng ký..." : "Đăng ký"}
               </button>
-              <a href="/auth/login" className="register-link">
+              <button
+                type="button"
+                onClick={() => router.push("/auth/login")}
+                className="register-link"
+              >
                 Đã có tài khoản? Đăng nhập ngay
-                </a>
+              </button>
             </form>
           </div>
         </div>
@@ -116,7 +123,7 @@ export default function Register() {
         .login-main-bg {
           min-height: 100vh;
           width: 100vw;
-          background: var(--bg-gradient);
+          background: var(--bg-gradient, linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%));
           display: flex;
           align-items: center;
           justify-content: center;
@@ -132,6 +139,7 @@ export default function Register() {
           display: flex;
           overflow: hidden;
         }
+
         .login-left {
           flex: 1.2;
           background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
@@ -142,6 +150,7 @@ export default function Register() {
           padding: 20px;
           text-align: center;
         }
+
         .login-image {
           max-width: 100%;
           height: 100%;
@@ -149,6 +158,7 @@ export default function Register() {
           border-radius: 12px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
         .login-right {
           flex: 1;
           background: #fff;
@@ -165,6 +175,7 @@ export default function Register() {
           font-weight: 600;
           margin-bottom: 24px;
         }
+
         .login-form {
           width: 100%;
           max-width: 320px;
@@ -204,33 +215,6 @@ export default function Register() {
           color: #b4b4b4;
         }
 
-        .login-options {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 0.95rem;
-          margin-top: -8px;
-        }
-
-        .remember-me {
-          color: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-
-        .forgot-link {
-          color: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
-          text-decoration: none;
-          font-weight: 500;
-          transition: text-decoration 0.2s;
-        }
-
-        .forgot-link:hover {
-          text-decoration: underline;
-        }
-
         .login-btn {
           width: 100%;
           padding: 12px 0;
@@ -250,6 +234,16 @@ export default function Register() {
         .login-btn:disabled {
           cursor: not-allowed;
           opacity: 0.7;
+        }
+
+        .register-link {
+          margin-top: 12px;
+          background: none;
+          border: none;
+          color: #2563eb;
+          font-size: 0.95rem;
+          text-decoration: underline;
+          cursor: pointer;
         }
 
         .error-message {
